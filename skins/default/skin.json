@@ -1,0 +1,1080 @@
+{"framesets": {
+    "walk_up": {
+        "images": ["player_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 160]],
+        "frame_pos": [[0, 0]],
+        "frames": [8],
+        "way": ["right"],
+        "loop": [true]
+    },
+    "walk_left": {
+        "images": ["player_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 192]],
+        "frame_pos": [[0, 0]],
+        "frames": [8],
+        "way": ["right"],
+        "loop": [true]
+    },
+    "walk_down": {
+        "images": ["player_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 128]],
+        "frame_pos": [[0, 0]],
+        "frames": [8],
+        "way": ["right"],
+        "loop": [true]
+    },
+    "walk_right": {
+        "images": ["player_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 224]],
+        "frame_pos": [[0, 0]],
+        "frames": [8],
+        "way": ["right"],
+        "loop": [true]
+    },
+    "idle_up": {
+        "images": ["player_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 32]],
+        "frame_pos": [[0, 0]],
+        "frames": [6],
+        "way": ["right"],
+        "loop": [true]
+    },
+    "idle_left": {
+        "images": ["player_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 64]],
+        "frame_pos": [[0, 0]],
+        "frames": [6],
+        "way": ["right"],
+        "loop": [true]
+    },
+    "idle_down": {
+        "images": ["player_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 0]],
+        "frame_pos": [[0, 0]],
+        "frames": [6],
+        "way": ["right"],
+        "loop": [true]
+    },
+    "idle_right": {
+        "images": ["player_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 96]],
+        "frame_pos": [[0, 0]],
+        "frames": [6],
+        "way": ["right"],
+        "loop": [true]
+    },
+    "turn_down_up": {
+        "images": ["player_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 256]],
+        "frame_pos": [[0, 0]],
+        "frames": [4],
+        "way": ["right"],
+        "loop": [true]
+    },
+    "turn_up_down": {
+        "images": ["player_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[128, 256]],
+        "frame_pos": [[0, 0]],
+        "frames": [4],
+        "way": ["right"],
+        "loop": [true]
+    },
+    "turn_down_left": {
+        "images": ["player_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 288]],
+        "frame_pos": [[0, 0]],
+        "frames": [2],
+        "way": ["right"],
+        "loop": [true]
+    },
+    "turn_down_right": {
+        "images": ["player_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[64, 288]],
+        "frame_pos": [[0, 0]],
+        "frames": [2],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "turn_up_left": {
+        "images": ["player_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[128, 288]],
+        "frame_pos": [[0, 0]],
+        "frames": [2],
+        "way": ["right"],
+        "loop": [true]
+    },
+    "turn_up_right": {
+        "images": ["player_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[192, 288]],
+        "frame_pos": [[0, 0]],
+        "frames": [2],
+        "way": ["right"],
+        "loop": [true]
+    },
+    "turn_left_right": {
+        "images": ["player_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 320]],
+        "frame_pos": [[0, 0]],
+        "frames": [4],
+        "way": ["right"],
+        "loop": [true]
+    },
+    "turn_right_left": {
+        "images": ["player_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[128, 320]],
+        "frame_pos": [[0, 0]],
+        "frames": [4],
+        "way": ["right"],
+        "loop": [true]
+    },
+    "turn_left_down": {
+        "images": ["player_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 352]],
+        "frame_pos": [[0, 0]],
+        "frames": [2],
+        "way": ["right"],
+        "loop": [true]
+    },
+    "turn_left_up": {
+        "images": ["player_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[64, 352]],
+        "frame_pos": [[0, 0]],
+        "frames": [2],
+        "way": ["right"],
+        "loop": [true]
+    },
+    "turn_right_down": {
+        "images": ["player_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[128, 352]],
+        "frame_pos": [[0, 0]],
+        "frames": [2],
+        "way": ["right"],
+        "loop": [true]
+    },
+    "turn_right_up": {
+        "images": ["player_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[192, 352]],
+        "frame_pos": [[0, 0]],
+        "frames": [2],
+        "way": ["right"],
+        "loop": [true]
+    },
+    "wall": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 832]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?-?-?-?-": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 832]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?*?*?*?*": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 832]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?+?-?+?-": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 0]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?+?-?+?*": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 0]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?+?*?+?-": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[64, 0]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?+?*?+?*": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[96, 0]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?-?+?-?+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 32]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?-?+?*?+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 32]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?*?+?-?+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[64, 32]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?*?+?*?+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[96, 32]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?-?-?+?-": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 64]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?*?*?+?*": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 64]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?+?-?-?-": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 96]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?+?*?*?*": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 96]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?-?-?-?+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 128]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?*?*?*?+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 128]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?-?+?-?-": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 160]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?*?+?*?*": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 160]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?-?+-+?-": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 192]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?-?+*+?-": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 192]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?*?+-+?*": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[64, 192]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?*?+*+?*": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[96, 192]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?-?-?+-+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 224]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?-?-?+*+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 224]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?*?*?+-+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[64, 224]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?*?*?+*+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[96, 224]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?+-+?-?-": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 256]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?+*+?-?-": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 256]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?+-+?*?*": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[64, 256]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?+*+?*?*": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[96, 256]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_-+?-?-?+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 288]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_*+?-?-?+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 288]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_-+?*?*?+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[64, 288]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_*+?*?*?+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[96, 288]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_-+-+-+-+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 320]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_*+*+*+-+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 320]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_-+*+*+*+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[64, 320]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_*+-+*+*+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[96, 320]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_*+*+-+*+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[128, 320]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_*+*+*+*+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[160, 320]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_-+*+*+-+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 352]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_-+-+*+*+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[64, 352]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_*+-+-+*+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[96, 352]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_*+*+-+-+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 384]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_-+*+-+*+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[64, 384]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_*+-+*+-+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 416]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_-+-+-+*+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[128, 384]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_*+-+-+-+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[160, 384]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_-+*+-+-+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[128, 416]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_-+-+*+-+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[160, 416]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_-+-+?-?+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 448]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_*+*+?-?+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 448]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_-+*+?*?+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[64, 448]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_*+-+?*?+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[96, 448]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_*+*+?*?+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[128, 448]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_-+*+?-?+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 480]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_-+-+?*?+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[64, 480]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_*+-+?-?+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 512]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?-?+-+-+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 544]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?*?+*+-+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 544]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?-?+*+*+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[64, 544]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?*?+-+*+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[96, 544]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?*?+*+*+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[128, 544]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?-?+*+-+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 576]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?-?+-+*+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[64, 576]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?*?+-+-+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 608]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_-+?-?+-+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 640]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_*+?*?+-+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 640]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_-+?*?+*+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[64, 640]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_*+?-?+*+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[96, 640]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_*+?*?+*+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[128, 640]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_-+?*?+-+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 672]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_-+?-?+*+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[64, 672]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_*+?-?+-+": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 704]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?+-+-+?-": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 736]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?+*+*+?-": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 736]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?+-+*+?*": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[64, 736]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?+*+-+?*": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[96, 736]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?+*+*+?*": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[128, 736]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?+-+*+?-": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 768]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?+-+-+?*": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[64, 768]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "wall_?+*+-+?-": {
+        "images": ["wall_3.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[32, 800]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "box": {
+        "images": ["box.png"],
+        "size": [64,64],
+        "frame_size": [[64, 64]],
+        "start_pos": [[0, 0]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "box_in_goal": {
+        "copy": "box"
+    },
+    "box_push_left": {
+        "copy": "box"
+    },
+    "box_push_right": {
+        "copy": "box"
+    },
+    "box_push_up": {
+        "copy": "box"
+    },
+    "box_push_down": {
+        "copy": "box"
+    },
+    "goal": {
+        "images": ["goal.png"],
+        "size": [64,64],
+        "frame_size": [[64, 64]],
+        "start_pos": [[0, 0]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    },
+    "goal_with_box": {
+        "copy": "goal"
+    },
+    "floor": {
+        "images": ["floor_2.png"],
+        "size": [32,32],
+        "frame_size": [[32, 32]],
+        "start_pos": [[0, 0]],
+        "frame_pos": [[0, 0]],
+        "frames": [1],
+        "way": ["right"],
+        "loop": [false]
+    }
+}}
