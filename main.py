@@ -2,14 +2,16 @@ import sys
 import pygame as pg
 
 import pygame_menu.menus as menus
+from pygame_menu.menus.game_menu import GameMenu
 from sokoban.utils import FpsDisplay
+from sokoban import Game
 
 class MainController:
     def __init__(self, args):
         pg.init()
 
         self.clock = pg.time.Clock()
-        self.screen = pg.display.set_mode([800,600])
+        self.screen = pg.display.set_mode([1024,800])
         self.fps_module = FpsDisplay(self.clock)
 
         self.running = True
@@ -19,8 +21,8 @@ class MainController:
 
         if '-editor' in args:
             menu = menus.EditorMainMenu(self, self.screen)
-        elif '-game' in args:
-            menu = MainMenu(self, self.screen)
+        elif '-debug' in args:
+            menu = menus.MainMenu(self, self.screen)
         else:
             menu = menus.MainMenu(self, self.screen)
         self.controllers.add(menu)
@@ -76,6 +78,17 @@ class MainController:
         self.change_controller(menu)
 
         return menu
+
+    def init_game(self, set_name, level):
+        game = Game(self, self.screen, set_name, level)
+        self.change_controller(game)
+
+    def init_game_menu(self, game, next_level):
+        menu = GameMenu(self, self.screen, game, next_level)
+        self.add_controller(menu)
+
+    def continue_game(self, game, menu):
+        self.remove_controller(game, menu)
 
     # END
 

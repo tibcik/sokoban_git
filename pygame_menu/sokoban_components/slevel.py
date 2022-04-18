@@ -5,15 +5,12 @@ Nem tisztán menüelem, mivel a működéséhez szükséges a sokoban játék n�
 from __future__ import annotations
 
 import pygame as pg
-from datetime import datetime
 
-import config #TODO: refactiring
-import game.game.loader as loader #TODO: refactoring
-from game.game.space import Space #TODO: refactoring
-import config.saves as saves #TODO: refactoring
+from sokoban import config
+from sokoban.data import loader, saves
+from sokoban import Space
 
 from ..components.component import *
-from utils import Pair
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -26,28 +23,31 @@ class SLevel(MouseGrabber, Selectable, Component):
     választható.
     
     Attributes:
-        action: callable a kiválasztáskor lefuttadandó metódus
-        set_name: str a set ahonnan a szint van
-        level: int a szint sorszáma
-        level_info: dict a szint adatai: név, nehézség, leírás
-        stats: dict a játékos teljesítménye ezen a pályán
-        space_image: pygame.Surface a pálya képe
-        font(property): pg.font.Font a gomb betűtipusa"""
+        action (Callable): a kiválasztáskor lefuttadandó metódus
+        set_name (str): pályakészket neve
+        level (int): a szint sorszáma
+        level_info (dict): {"name": str, "dificulty": int, "description": str}
+        stats (dict): {'moves': (int), 'time': (float), 'best_moves': (int), 'best_time': (float)}
+        space_image (pygame.Surface): a pálya képe
+        font(property) (pygame.font.Font): betűtipus"""
     def __init__(self, container: Container, action: Callable, set_name: str,
         level: int, **kwargs):
-        """belépési pont
-        
+        """SLevel
+
         Args:
-            container: a befogalaló container
-            action: kiválasztás esetén futtatandó metódus
-            set_name: a set neve
-            level: a szint száma
-            kwargs: {position, size, sticky}"""
+            container (Container): a befogalaló container
+            action (Callable): visszatérési metódus
+            set_name (str): pályakészlet neve
+            level (int): szint száma
+        """
         Component.__init__(self, container, **kwargs)
 
         self.action = action
         self.set_name = set_name
         self.level = level
+
+        if not callable(self.action):
+            self.selectable = False
 
         self.font = config.get_font(config.BUTTON_FONT, config.SMALL_FONT_SIZE)
 
@@ -60,8 +60,8 @@ class SLevel(MouseGrabber, Selectable, Component):
         self.size = (228, 400) #TODO padding, margin
 
         self.color['bg'] = config.BUTTON_DEFAULT_COLOR
-        self.color['focus'] = config.BUTTON_FOCUS_COLOR
-        self.color['select'] = config.BUTTON_SELECT_COLOR
+        self.color['focus'] = config.BUTTON_FONT_FOCUS_COLOR
+        self.color['select'] = config.BUTTON_FONT_SELECT_COLOR
         self.color['font'] = config.BUTTON_FONT_COLOR
 
         if 'selected' in kwargs and kwargs['selected']:
@@ -69,7 +69,7 @@ class SLevel(MouseGrabber, Selectable, Component):
         else:
             self.select = False
 
-        space = Space(None, self.set_name, self.level, (200,200))
+        space = Space((200,200), None, self.set_name, self.level)
         self.space_image = pg.Surface((200, 200))
         space.draw(self.space_image)
 
@@ -118,28 +118,32 @@ class SLevel(MouseGrabber, Selectable, Component):
 
         # Ha van róla statisztika akkor a játékos már befejezte a pályát
         # ennek adatai is kirajzoljuk
-        if self.stats is not None:
-            text = datetime.strftime(self.stats['time'], "%M:%S")
-            rendered = self.font.render(text, True, self.color['font'], self.color['bg'])
+        if self.stats is not None and self.stats['best_moves'] != 0:
+            text = "{:02d}:{:02d}".format(int(self.stats['best_time'] / 60), int(self.stats['best_time'] % 60))
+            rendered = self.font.render(text, True, self.color['font'])
             self.image.blit(rendered, (14,14))
 
-            text = self.stats['moves']
-            rendered = self.font.render(text, True, self.color['font'], self.color['bg'])
+            text = str(self.stats['best_moves'])
+            rendered = self.font.render(text, True, self.color['font'])
             self.image.blit(rendered, (114 - rendered.get_width(),14))
 
     def e_MouseButtonUp(self, **kwargs):
-        """egér mozgás kezelése
+        """egér gombelengedés kezelése
         
-        Args:
-            kwargs: {pos, rel, button, touch}"""
+        Kwargs:
+            pos (tuple): az mutató pozíciója
+            button (int): nyomvatartott gomb
+            touch (bool): ?"""
         if callable(self.action):
             self.action(self)
 
     def e_KeyUp(self, key, **kwargs):
         """billentyűzet gombfelengedésének lekezelése
         
-        Args:
-            key: ...
-            kwargs: {mod, unicode, scancode}"""
+        Kwargs:
+            key (int): a billentyű kódja
+            mod (int): módosítóbillentyűk
+            unicode (char): a felengedett billentyű unicode értéke
+            scancode (int?): a felengedett billenytű scancode értéke"""
         if key in (pg.K_RETURN, pg.K_KP_ENTER) and callable(self.action):
             self.action(self)

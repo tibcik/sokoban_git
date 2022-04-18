@@ -4,10 +4,9 @@ from __future__ import annotations
 
 import pygame as pg
 
-import config #TODO: refactiring
+from sokoban import config
 
 from .component import *
-from utils import Pair
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -19,13 +18,16 @@ class Checkbox(MouseGrabber, Selectable, Component):
     Container osztályban felhasználható választóelem.
     
     Attributes:
-        checked(property): a kiválasztás állapota"""
+        checked(property) (bool): a kiválasztás állapota"""
     def __init__(self, container: Container, checked: bool = False, **kwargs):
         """belépési pont
         
         Args:
-            container: a befogalaló container
-            checked: a kiválasztás állapota"""
+            container (Container): a befogalaló container
+            checked (bool): a kiválasztás állapota. Defaults to False.
+            
+        Kwargs:
+            -> Component.__init__(...)"""
         Component.__init__(self, container, **kwargs)
 
         self.checked = checked

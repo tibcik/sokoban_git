@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pygame as pg
 
-import config #TODO: refactiring
+from sokoban import config
 
 from .component import *
 from ..utils import VERTICAL, HORIZONTAL
@@ -20,20 +20,22 @@ class Scrollbar(MouseGrabber, Component):
     Container osztályban felhasználható nyomógomb vagy választható menüelem.
     
     Attributes:
-        orientation: HORIZONTAL | VERTICAL a scrollbar iránya
-        bar_rect: pygame.rect.Rect a bart befoglaló négyszög
-        view_size: Pair a Container image mérete
-        value: float a scrollbar értéke 0 és 1 között
-        focus(property): bool a componens fokuszban van-e
-        show(property): bool a componens látható-e"""
-    def __init__(self, container: Container, orientation: int = VERTICAL, *args, **kwargs):
+        orientation (int): HORIZONTAL | VERTICAL a scrollbar iránya
+        bar_rect (pygame.rect.Rect): a bart befoglaló négyszög
+        view_size (Pair): a Container image mérete
+        value (float): a scrollbar értéke 0 és 1 között
+        focus(property) (bool):  componens fokuszban van-e
+        show(property) (bool): a componens látható-e"""
+    def __init__(self, container: Container, orientation: int = VERTICAL, **kwargs):
         """belépési pont
         
         Args:
-            container: a befogalaló container
-            orientation: a scrollbar iránya
-            kwargs: {position, size, sticky}"""
-        Component.__init__(self, container, *args, **kwargs)
+            container (Container): a befogalaló container
+            orientation (int): a scrollbar iránya. Defaults to VERTICAL.
+        
+        Kwargs:
+            -> Component.__init__(...)"""
+        Component.__init__(self, container, **kwargs)
 
         self.orientation = orientation
         self.bar_rect = pg.rect.Rect(0,0,0,0)
@@ -175,14 +177,26 @@ class Scrollbar(MouseGrabber, Component):
         """egér görgőjének továbbadása
         
         Args:
-            y: az egér gőrgőjének elmozdulása
-            kwargs: {witch, flipped, x, touch}"""
+            y (int): görgő y elmozdulása
+        
+        Kwargs:
+            witch (?): ?
+            flipped (?): ?
+            x (int): görgő x elmozdulása
+            touch (bool): ?"""
         self.container.scroll = {'relx' if self.orientation == HORIZONTAL else 'rely': 25 * y * -1}
 
         self.updated()
 
     def e_MouseButtonDown(self, pos, **kwargs):
-        """Egérgom felengedésének lekezelése"""
+        """Egérgom felengedésének lekezelése
+        
+        Args:
+            pos (tuple): az mutató pozíciója
+            
+        Kwargs:
+            button (int): nyomvatartott gomb
+            touch (bool): ?"""
         bar_pos, bar_size = self.bar_rect.topleft, self.bar_rect.size
         i = 0 if self.orientation == HORIZONTAL else 1
 
@@ -193,7 +207,12 @@ class Scrollbar(MouseGrabber, Component):
         """egér mozgás kezelése
         
         Args:
-            kwargs: {pos, rel, button, touch}"""
+            rel (tuple): az egér relatív elmozdulása
+            
+        Kwargs:
+            pos (tuple): az mutató pozíciója
+            button (int): nyomvatartott gomb
+            touch (bool): ?"""
         if self.mouse_grabbed:
             selector = 0 if self.orientation == HORIZONTAL else 1
             rate = (self.view_size[selector] - self.size[selector]) / (self.size[selector] - self.bar_rect.size[selector])

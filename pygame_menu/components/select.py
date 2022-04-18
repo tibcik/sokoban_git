@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pygame as pg
 
-import config #TODO: refactiring
+from sokoban import config
 
 from .component import *
 from utils import Pair, betweens
@@ -20,19 +20,22 @@ class Select(KeyboardGrabber, Scrollable, MouseGrabber, Selectable, Component):
     oldalára kattintva lehet választani az előre beállított elem közül.
     
     Attributes:
-        selected: int a kiválasztott elem indexe
-        animation: dict az elem értékének megváltoztatásokor lezajlódó animációhoz
-        items(property): tuple(str) a választható elemek
-        font(property): pg.font.Font a gomb betűtipusa
-        value(property csak getter): str a kiválasztott elem értékét adja vissza"""
-    def __init__(self, container: Container, items: tuple(str), selected: int = 0, **kwargs):
+        selected (int): a kiválasztott elem indexe
+        animation (dict): az elem értékének megváltoztatásokor lezajlódó animációhoz {'run': bool, 'tick': int, 'way': int}
+        items(property) (tuple[str]): a választható elemek
+        font(property) (pygame.font.Font): a gomb betűtipusa
+        value(property csak getter) (str): a kiválasztott elem értékét adja vissza"""
+    def __init__(self, container: Container, items: tuple(str), selected: int = 0, font_size: int = config.DEFAULT_FONT_SIZE, **kwargs):
         """belépési pont
         
         Args:
-            container: a befogalaló container
-            items: a kiválasztható elemek
-            selected: az előre kivcálasztott elem
-            kwargs: {position, size, sticky}"""
+            container (Container): a befogalaló container
+            items (tuple[str]): a kiválasztható elemek
+            selected (int): az előre kivcálasztott elem. Defaults to 0.
+            font_size (int): a szöveg mérete. Defaults to config.DEFAULT_FONT_SIZE.
+        
+        Kwargs:
+            -> Component.__init__(...)"""
         Component.__init__(self, container, **kwargs)
 
         self.items = items
@@ -151,7 +154,14 @@ class Select(KeyboardGrabber, Scrollable, MouseGrabber, Selectable, Component):
                 self.container.updated()
         
     def e_MouseButtonUp(self, pos, **kwargs):
-        """egér gombelengedés kezelése"""
+        """egér gombelengedés kezelése
+        
+        Args:
+            pos (tuple): az mutató pozíciója
+
+        Kwargs:
+            button (int): nyomvatartott gomb
+            touch (bool): ?"""
         # TODO: ezt lehet érdemes lenne átírni, ha kiderül mekkora lesz a nyíl
         if pos[0] < self.size[0] * 0.2:
             self.e_KeyUp(pg.K_LEFT)
@@ -159,14 +169,30 @@ class Select(KeyboardGrabber, Scrollable, MouseGrabber, Selectable, Component):
             self.e_KeyUp(pg.K_RIGHT)
 
     def e_KeyDown(self, key, **kwargs):
-        """billentyűzet gombnyomásának lekezelése"""
+        """billentyűzet gombnyomásának lekezelése
+
+        Args:
+            key (int): a billentyű kódja
+        
+        Kwargs:
+            mod (int): módosítóbillentyűk
+            unicode (char): a lenyomott billentyű unicode értéke
+            scancode (int?): a lenyomott billenytű scancode értéke"""
         if key == pg.K_LEFT or key == pg.K_RIGHT:
             self.grab_keyboard()
         else:
             self.release_keyboard()
 
     def e_KeyUp(self, key, **kwargs):
-        """billentyűzet gombfelengedésének lekezelése"""
+        """billentyűzet gombfelengedésének lekezelése
+
+        Args:
+            key (int): a billentyű kódja
+        
+        Kwargs:
+            mod (int): módosítóbillentyűk
+            unicode (char): a felengedett billentyű unicode értéke
+            scancode (int?): a felengedett billenytű scancode értéke"""
         if key == pg.K_LEFT:
             if (self.selected - 1) >= 0:
                 self.selected -= 1

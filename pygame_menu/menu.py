@@ -8,6 +8,7 @@ from __future__ import annotations
 import pygame as pg
 
 from utils import Pair
+
 from .utils import EventHandler
 from .components import Container
 from .components.component import MouseGrabber
@@ -86,11 +87,11 @@ class Menu(EventHandler, pg.sprite.Sprite):
 
     def lose_selection(self, container: Container):
         """a szelekciót elvesztő container osztály által meghívott metódus"""
-        self.focused = container
+        self.focused = None #container
         self.selected = None
 
         container.select = False
-        container.focus = True
+        container.focus = False #True
 
     #update és rajzolás
 
@@ -147,7 +148,6 @@ class Menu(EventHandler, pg.sprite.Sprite):
         for container in self.containers:
             if self.is_mouse_in_item(container, pos):
                 focused = container
-                break
 
         return focused
 
@@ -184,11 +184,13 @@ class Menu(EventHandler, pg.sprite.Sprite):
             if self.focused != self.selected:
                 if self.selected is not None:
                     self.selected.select = False
+                    self.selected = None
                 # A default containert nem lehet kiválasztani
                 if self.focused != self.default:
                     self.selected = self.focused
                     self.selected.select = True
 
+                kwargs['in'] = self.is_mouse_in_item(self.focused, kwargs['pos'])
                 kwargs['pos'] = self.get_rel_mouse_pos(self.focused, kwargs['pos'])
                 self.focused.e_MouseButtonDown(**kwargs)
         # Ha az egér nem áll komponens fölött megszüntetjük a kiválasztást
@@ -285,9 +287,6 @@ class Menu(EventHandler, pg.sprite.Sprite):
         # Ha van kiválasztott componens akkor annak küldjük az eseményt
         if self.selected is not None:
             self.selected.e_KeyDown(**kwargs)
-            # Ha rögzítve van a selected container
-            if self.fixed:
-                return
         # Ha nincs akkor a TAB billentyűvel másik komponensre tesszük a fókuszt
         elif key == pg.K_TAB:
             # Megkeressük az jelenleg kiválasztoott container utáni első nem
@@ -312,10 +311,6 @@ class Menu(EventHandler, pg.sprite.Sprite):
                     self.focused.focus = False
                 self.focused = next_container
                 self.focused.focus = True
-        # Az ESCAPE billentyűvel elvesszük a fókuszt
-        elif key == pg.K_ESCAPE and self.selected is not None:
-            self.selected.select = False
-            self.selected = None
         else:
             # Egyébként, ha a fókuszban lévő container nem a default akkor
             # azt kiválasztjuk

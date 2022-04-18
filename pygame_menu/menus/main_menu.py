@@ -1,16 +1,36 @@
+"""Főmenü
+"""
+from __future__ import annotations
+
 import pygame as pg
-from pygame_menu.components.component import STICKY_DOWNLEFT, STICKY_LEFT
 
-from utils.pair import Pair
+from sokoban.data import saves
 
+from ..components.component import STICKY_DOWNLEFT, STICKY_LEFT
 from ..menu import Menu
-from ..components import Container, Button, Label, TextEntry
+from ..components import Container, Button, Label
 from .containers import TextEntryContainer
 
-import config.saves as saves
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from main import MainController
 
 class MainMenu(Menu):
-    def __init__(self, controller, screen):
+    """Főmenü és játékslot választó
+
+    Arguments:
+        controller (MainController): legfelső vezérlő objektum
+        screen (pygame.Surface): teljes megjelenítési felület
+        selected_player_id (id): kiválasztott játékos
+        selected_button (Button): kiválasztott játékosslot gombja
+    """
+    def __init__(self, controller: MainController, screen: pg.Surface):
+        """MainMenu
+
+        Args:
+            controller (MainController): legfelső vezérlő objektum
+            screen (pygame.Surface): teljes megjelenítési felület
+        """
         Menu.__init__(self)
 
         self.controller = controller
@@ -22,20 +42,27 @@ class MainMenu(Menu):
         self.init_main_menu(None)
 
     def init_main_menu(self, _):
+        """Főmenü betöltése
+        """
         self.clear()
         self.main_container = Container(self, size=self.screen.get_size())
 
+        b = None
         y_offset = 0
         last_player = saves.get_last_player_id()
         if last_player != -1:
-            b = Button(self.main_container, "Folytatás", self.continue_game, position=(1/8,1/3))
+            b = Button(self.main_container, "Folytatás", self.continue_game, position=(1/8,1/3), selected=True)
             y_offset = b.size[1] + 10
-        b = Button(self.main_container, "Új játék", self.init_game_slot_selector_menu,
-            position=(1/8,1/3+y_offset))
+        b = Button(self.main_container, "Profilok", self.init_game_slot_selector_menu,
+            position=(1/8,1/3+y_offset), selected=(False if b else True))
         y_offset += b.size[1] + 10
+        b = Button(self.main_container, "Beállítások", self.init_settings_menu, position=(1/8,1/3+y_offset))
+        y_offset += b.size[1] + 30
         Button(self.main_container, "Kilépés", self.controller.exit, position=(1/8, 1/3+y_offset))
 
     def init_game_slot_selector_menu(self, _):
+        """Játékosslot menü betöltése
+        """
         self.clear()
         self.main_container = Container(self, size = self.screen.get_size())
 
@@ -53,7 +80,12 @@ class MainMenu(Menu):
 
         self.selected_player_id = -1
 
-    def init_player_menu(self, button):
+    def init_player_menu(self, button: Button):
+        """Játékos menüre váltás
+
+        Args:
+            button (Button): Kiválasztott játékos gombja
+        """
         self.selected_button = button
         self.selected_player_id = int(button.id)
 
@@ -63,12 +95,27 @@ class MainMenu(Menu):
 
         TextEntryContainer(self, "Név", self.add_player_name, position=(0,1/3), size=self.screen.get_size())
 
-    def add_player_name(self, name):
+    def add_player_name(self, name: str):
+        """Játékos hozzáadása
+
+        Args:
+            name (str): Játékos neve
+        """
         if name is None or name == '':
             return
 
         saves.add_player(name, self.selected_player_id)
         self.selected_button.text = name
 
-    def continue_game(self, button):
+    def init_settings_menu(self, _):
+        """NotImplemented
+        """
         print("NotImplemented!")
+
+    def continue_game(self, _):
+        """Előző játék folytatása
+        """
+        set_name = saves.get_current_set()
+        level = saves.get_current_level()
+
+        self.controller.init_game(set_name, level)

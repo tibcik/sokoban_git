@@ -53,39 +53,33 @@ class Component(EventHandler, pg.sprite.Sprite):
     Kirajzolja a kész képet a kapott pg.Surface objektumra.
 
     Attributes:
-        container: pygame_menu.components.Container vagy None értéket vehet fel
-            None értéket csak akkor vehet fel, ha maga is Container
-        image: pygame.Surface osztály. A componens vizuális megjelenése
-        position(property): Pair a componens bal felső pontja a container-hez
-            képest
-        size(property): Pair a componens megjelenített mérete
-        sticky(property): tuple(int, int) a komponens pozícionálása adott oldalhoz
-        focus(property): bool a componens fokuszban van-e
-        show: bool a componens látható-e
-        color(propery): dict ami (r,g,b,a) formában tárol színeket, lehetséges
-            elemek: bg, focus, font
-        _updated: bool a componens frissűlt a legutólsó draw óta, következő
-            rajzolásnál szükséges az image frissítése
-        rect(property, csak getter): a pozíciót és a méretet tartalmazó
-            pygame.rect.Rect objektum
-        area(property, csak getter): csak a méretet tartalmazó
-            pygame.rect.Rect objektum
-
-    """
+        container (Container | None): None értéket csak akkor vehet fel, ha maga is Container
+        image (pygame.Surface): A componens vizuális megjelenése
+        position(property) (Pair): a componens bal felső pontja a container-hez képest
+        size(property) (Pair): a componens megjelenített mérete
+        sticky(property) (tuple(int, int)): a komponens pozícionálása adott oldalhoz
+        focus(property) (bool): a componens fokuszban van-e
+        show (bool): a componens látható-e
+        color(propery) (dict): (r,g,b,a) formában tárol színeket, lehetséges elemek: bg, focus, font
+        _updated (bool): a componens frissűlt a legutólsó draw óta, következő rajzolásnál szükséges az image frissítése
+        rect(property, csak getter) (pygame.rect.Rect): a pozíciót és a méretet tartalmazza
+        area(property, csak getter) (pygame.rect.Rect): csak a méretet tartalmazza
+        id (any): szabadon használható azonosító"""
     def __init__(self,
             container: Container | None,
             position: tuple(int, int) = (0,0),
             size: tuple(int, int) = (0,0),
             sticky: tuple(int, int) = STICKY_UPLEFT,
-            id: str = None
+            id: any = None
         ):
-        """belépési pont
+        """Component
 
         Args:
-            container: az componenst befoglaló osztály
-            position: a componens pozíciója az őt befoglaló container-en belül
-            size: a componens látható mérete
-            sticky: a componens pozícionálása a position-hoz képest
+            container (Container | None): az componenst befoglaló osztály
+            position (tuple[int,int]): a componens pozíciója az őt befoglaló container-en belül. Defaults to (0,0).
+            size (tuple[int,int]): a componens látható mérete. Defaults to (0,0).
+            sticky (tuple[int,int]): a componens pozícionálása a position-hoz képest. Defaults to STICKY_UPLEFT.
+            id (any): szabadon használható azonosító. Defaults to None.
         """
         pg.sprite.Sprite.__init__(self)
 
@@ -127,7 +121,7 @@ class Component(EventHandler, pg.sprite.Sprite):
         """setter
         
         Args:
-            value: bármilyen legalább kételemű listaszerű objektum"""
+            value (tuple[int,int]): bármilyen legalább kételemű listaszerű objektum"""
         assert hasattr(value, "__getitem__") and len(value) > 1, (f"Várt "
             f"list, tuple, Pair típus, kapott {type(value)}.")
 
@@ -153,7 +147,7 @@ class Component(EventHandler, pg.sprite.Sprite):
         """setter
         
         Args:
-            value: bármilyen legalább kételemű listaszerű objektum"""
+            value (tuple[int, int]): bármilyen legalább kételemű listaszerű objektum"""
         assert hasattr(value, "__getitem__") and len(value) > 1, (f"Várt "
             f"list, tuple, Pair típus, kapott {type(value)}.")
 
@@ -171,8 +165,7 @@ class Component(EventHandler, pg.sprite.Sprite):
         """setter
         
         Args:
-            value: a STICKY konstansok egyike, vagy bármely kételemű listaszerű
-                objektum"""
+            value (tuple[int,int]): a STICKY konstansok egyike, vagy bármely kételemű listaszerű objektum"""
         assert hasattr(value, "__getitem__") and len(value) > 1, (f"Várt "
             f"list, tuple, Pair típus, kapott {type(value)}.")
 
@@ -237,7 +230,7 @@ class Component(EventHandler, pg.sprite.Sprite):
         """component kirajzolása
         
         Args:
-            surface: pygame.Surface amire az elemet rajzolni kell"""
+            surface (pygame.Surface): amire az elemet rajzolni kell"""
         if self.show:
             if self._updated:
                 self.update_image()
@@ -251,12 +244,8 @@ class Scrollable:
     class Foo(.., Scrollable, ..., Component, ...)
 
     Attributes:
-        scroll(property): Pair ennyivel mozdítja el a componenst a draw objektum
-            mikor kirajzolja azt
-        area(property, csak getter): a scroll pozíciót és a méretet tartalmazó
-            pygame.rect.Rect objektum
-
-    """
+        scroll(property) (Pair): ennyivel mozdítja el a componenst a draw objektum mikor kirajzolja azt
+        area(property, csak getter) (pygame.rect.Rect): a scroll pozíciója és a mérete"""
     @property
     def scroll(self) -> Pair:
         """getter"""
@@ -270,8 +259,7 @@ class Scrollable:
         """setter
         
         Attr:
-            value: dict | tuple ami megadja vagy a relatív vagy az abszolút
-                scroll pozíciót
+            value (dict | tuple): megadja vagy a relatív vagy az abszolút scroll pozíciót
                 dict: {"x": abszolút, "y": absoulút, "relx": relatív, "rely": relatív}"""
         assert isinstance(self, Component), (f"Az ősosztályok között ott kell "
             f"lennie a pygame_menu.components.Component osztálynak!")
@@ -310,8 +298,8 @@ class Selectable:
     class Foo(.., Selectable, ..., Component, ...)
 
     Attributes:
-        color(property): Az alap színeket kiegészíti a select értékkel
-        select(setter): bool a kiválasztás értéke
+        color(property) (dict): Az alap színeket kiegészíti a select értékkel
+        select(property) (bool): a kiválasztás értéke
     """
     @property
     def color(self) -> dict:
@@ -363,6 +351,37 @@ class Selectable:
 
         self.updated()
 
+    @property
+    def selectable(self):
+        """getter"""
+        if not hasattr(self, "_selectable"):
+            self._selectable = True
+
+        return self._selectable
+
+    @selectable.setter
+    def selectable(self, value):
+        """setter"""
+
+        if not value:
+            self.select = False
+        self._selectable = value
+
+    @property
+    def focus(self) -> bool:
+        """getter"""
+        return self._focus
+
+    @focus.setter
+    def focus(self, value: bool):
+        """setter"""
+        if self.selectable:
+            self._focus = value
+        else:
+            self._focus = False
+
+        self.updated()
+
 class MouseGrabber:
     """Egér megfogó component
 
@@ -370,7 +389,7 @@ class MouseGrabber:
     class Foo(.., MouseGrabber, ..., Component, ...)
 
     Attributes:
-        mouse_grabbed(property): az egér el van-e kapva
+        mouse_grabbed(property) (bool): az egér el van-e kapva
     """
     @property
     def mouse_grabbed(self) -> bool:
@@ -405,7 +424,7 @@ class KeyboardGrabber:
     class Foo(.., KeyboardGrabber, ..., Component, ...)
 
     Attributes:
-        keyboard_grabbed(property): a billentyűzet el van-e kapva
+        keyboard_grabbed(property) (bool): a billentyűzet el van-e kapva
     """
     @property
     def keyboard_grabbed(self) -> bool:

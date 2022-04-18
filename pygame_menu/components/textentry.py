@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pygame as pg
 
-import config #TODO: refactiring
+from sokoban import config
 
 from .component import *
 from utils import Pair
@@ -20,23 +20,26 @@ class TextEntry(Scrollable, KeyboardGrabber, Selectable, Component):
     beírni, azon változtatni.
     
     Attributes:
-        curzor: dict a kurzor adatai(pozíció, látható-e, utolsó állapotváltás)
-        pressed_key: dict | None a lenyomott billenytűrűl tartalmat adatokat
-        font(property): pg.font.Font a gomb betűtipusa
-        value(property): str az elemben lévő szöveg"""
-    def __init__(self, container: Container, value: str = '', **kwargs):
+        curzor (dict): a kurzor adatai {'last_blink': (int), 'blind': (bool), 'pos': (int)}
+        pressed_key (dict | None): a lenyomott billenytűrűl tartalmat adatokat
+        font(property) (pygame.font.Font): a gomb betűtipusa
+        value(property) (str): az elemben lévő szöveg"""
+    def __init__(self, container: Container, value: str = '', font_size: int = config.DEFAULT_FONT_SIZE, **kwargs):
         """belépési pont
         
         Args:
             container: a befogalaló container
-            value: az elemben megjelenő szöveg
-            kwargs: {position, size, sticky}"""
+            value: az elemben megjelenő szöveg. Defaults to ''.
+            font_size (int): a szöveg mérete. Defaults to config.DEFAULT_FONT_SIZE.
+        
+        Kwargs:
+            -> Component.__init__(...)"""
         Component.__init__(self, container, **kwargs)
 
         assert 'size' in kwargs, f"A TextEntry elemnek kötelező megadni a méretét!"
 
         self.value = value
-        self.font = config.get_font(config.TEXTENTRY_FONT, config.DEFAULT_FONT_SIZE)
+        self.font = config.get_font(config.TEXTENTRY_FONT, font_size)
 
         self.cursor = {'last_blink': 0, 'blind': False, 'pos': 0}
 
@@ -139,20 +142,28 @@ class TextEntry(Scrollable, KeyboardGrabber, Selectable, Component):
         self.image.blit(rendered, (3,3))
 
     def e_MouseButtonUp(self, **kwargs):
-        """egér mozgás kezelése
+        """egér gombelengedés kezelése
         
-        Args:
-            kwargs: {pos, rel, button, touch}"""
+        Kwargs:
+            pos (tuple): az mutató pozíciója
+            button (int): nyomvatartott gomb
+            touch (bool): ?"""
         self.keyboard_grabbed = True
         self.updated()
 
     def e_KeyDown(self, unicode, key, **kwargs):
         """billentyűzet gombnyomásának lekezelése
-        
+
         Args:
-            unicode: ...
-            key: ...
-            kwargs: {mod, scancode}"""
+            unicode (char): a lenyomott billentyű unicode értéke
+            key (int): a billentyű kódja
+        
+        Kwargs:
+            mod (int): módosítóbillentyűk
+            scancode (int?): a lenyomott billenytű scancode értéke
+            
+        Return:
+            bool: gomblenyomás továbbra is feldolgozandó"""
         if self.keyboard_grabbed:
             # Nyilag lenyomásának hatására a curzor pozíciója változik
             if key == pg.K_LEFT:
@@ -208,8 +219,11 @@ class TextEntry(Scrollable, KeyboardGrabber, Selectable, Component):
     def e_KeyUp(self, **kwargs):
         """billentyűzet gombfelengedésének lekezelése
         
-        Args:
-            kwargs: {key, mod, unicode, scancode}"""
+        Kwargs:
+            key (int): a billentyű kódja
+            mod (int): módosítóbillentyűk
+            unicode (char): a felengedett billentyű unicode értéke
+            scancode (int?): a felengedett billenytű scancode értéke"""
         self.pressed_key = None
 
     def update(self):
@@ -316,11 +330,17 @@ class MultiTextEntry(TextEntry):
 
     def e_KeyDown(self, unicode, key, **kwargs):
         """billentyűzet gombnyomásának lekezelése
-        
+
         Args:
-            unicode: ...
-            key: ...
-            kwargs: {mod, scancode}"""
+            unicode (char): a lenyomott billentyű unicode értéke
+            key (int): a billentyű kódja
+        
+        Kwargs:
+            mod (int): módosítóbillentyűk
+            scancode (int?): a lenyomott billenytű scancode értéke
+            
+        Return:
+            bool: gomblenyomás továbbra is feldolgozandó"""
         if self.keyboard_grabbed:
             # Nyilak lenyomásának hatására a curzor pozíciója változik
             if key == pg.K_LEFT:

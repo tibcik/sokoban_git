@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import pygame as pg
 
-import config #TODO: refactoring
+from sokoban import config
 
 from .component import *
 from .button import Button #TODO: tesztelési céllal, kivenni
@@ -27,24 +27,24 @@ class Container(Selectable, Scrollable, Component):
     Elemei más Component típusú objektumok.
     
     Attributes:
-        menu: pygame_menu.Menu objektum amiben a container van
-        items: pygame.sprite.Group[Component] componenseket tartalmazó Group
-        selectable: list[Component] a kiválasztható componensek
-        updated_items: list[Component] az utolsó rajzolás óta megváltozott
-            componensek listája
-        default: a Container a menu default objektuma
-        selected(property): a kiválasztott component
-        focused: a fókuszált component
-        xscroller: Horizontális scollbar
-        yscroller: Vertikális scollbar
-        focus(property): bool a componens fokuszban van-e
-        select(setter): bool a kiválasztás értéke"""
+        menu (Menu): objektum amiben a container van
+        items (pygame.sprite.Group[Component]): componenseket tartalmazó Group
+        selectable (list[Component]): a kiválasztható componensek
+        default (bool): a Container a menu default objektuma
+        selected(property) (Component): a kiválasztott component
+        focused (Component): a fókuszált component
+        xscroller (Scrollbar): Horizontális scollbar
+        yscroller (Scrollbar): Vertikális scollbar
+        focus(property) (bool): a componens fokuszban van-e
+        select(setter) (bool): a componens ki van-e választva"""
     def __init__(self, menu: Menu, **kwargs):
         """belépési pont
         
         Args:
-            menu: pygame_menu.Menu objektum
-            kwargs: {position, size, sticky}"""
+            menu (Menu): a contaninert befoglaló Menu objektum
+        
+        Kwargs:
+            -> Component.__init__(...)"""
         Component.__init__(self, None, **kwargs)
 
         assert 'size' in kwargs, ("A Container osztálynak kötelező megadni a size "
@@ -54,8 +54,7 @@ class Container(Selectable, Scrollable, Component):
         self.menu.add(self)
 
         self.items = pg.sprite.Group()
-        self.selectable = []
-        self.updated_items = []
+        self.selectables = []
 
         self.default = False
         if 'default' in kwargs:
@@ -94,9 +93,12 @@ class Container(Selectable, Scrollable, Component):
         self.updated()
 
     @property
-    def select(self):
+    def select(self) -> bool:
         """getter"""
-        return self._selected
+        if not hasattr(self, "_select"):
+            self._select = False
+
+        return self._select
 
     @select.setter
     def select(self, value: bool):
@@ -155,7 +157,7 @@ class Container(Selectable, Scrollable, Component):
         
         self.items.add(item)
         if isinstance(item, Selectable):
-            self.selectable.append(item)
+            self.selectables.append(item)
 
         self.updated()
 
@@ -168,8 +170,8 @@ class Container(Selectable, Scrollable, Component):
         
         if self.items.has(item):
             self.items.remove(item)
-            if item in self.selectable:
-                self.selectable.remove(item)
+            if item in self.selectables:
+                self.selectables.remove(item)
 
         self.updated()
 
@@ -234,11 +236,11 @@ class Container(Selectable, Scrollable, Component):
         """relatív egér pozíció meghatározása
         
         Args:
-            item: pygame_menu.component.Component objektum
-            pos: az egérmutató pozíciója
+            item (Component): a vizsgálandó komponens
+            pos (tuple[int,int]): az egérmutató pozíciója
 
         Returns:
-            utils.Pair objektum a relatív egér pozícióval
+            Pair: objektum a relatív egér pozícióval
         """
 
         return Pair(pos) - (item.position - self.scroll)
@@ -247,11 +249,11 @@ class Container(Selectable, Scrollable, Component):
         """Megvizsgálja, hogy az egér az item határain belül van-e
         
         Args:
-            item: pygame_menu.component.Component objektum
-            pos: az egérmutató pozíciója
+            item (Component): a vizsgálandó komponens
+            pos (tuple[int,int]): az egérmutató pozíciója
             
         Returns:
-            bool érték"""
+            bool: érték"""
         rpos = self.get_rel_mouse_pos(item, pos)
         test = (rpos.p1 > 0 and rpos.p2 > 0 and rpos.p1 < item.area.width and
             rpos.p2 < item.area.height)
@@ -262,10 +264,10 @@ class Container(Selectable, Scrollable, Component):
         """Az a komponens amin az egérmutató áll
         
         Args:
-            pos: az egérmutató pozíciója
+            pos (tuple[int,int]): az egérmutató pozíciója
             
         Returns:
-            Az egérmutatón álló komponens vagy None"""
+            Component | None: Az egérmutatón álló komponens vagy None"""
         focused = None
 
         for item in self.items:
@@ -280,8 +282,10 @@ class Container(Selectable, Scrollable, Component):
     def e_MouseButtonDown(self, **kwargs):
         """egér gomblenyomás kezelése
         
-        Args:
-            kwargs: {pos, button, touch}"""
+        Kwargs:
+            pos (tuple): az mutató pozíciója
+            button (int): nyomvatartott gomb
+            touch (bool): ?"""
         if kwargs['in']:
             if self.focused is not None:
                 if isinstance(self.focused, MouseGrabber):
@@ -293,8 +297,10 @@ class Container(Selectable, Scrollable, Component):
     def e_MouseButtonUp(self, **kwargs):
         """egér gombelengedés kezelése
         
-        Args:
-            kwargs: {pos, button, touch}"""
+        Kwargs:
+            pos (tuple): az mutató pozíciója
+            button (int): nyomvatartott gomb
+            touch (bool): ?"""
         # Ha nem a container-en belül lett elengedve a gomb, az azt megfogó
         # component akkor is el kell engedje azt.
         if isinstance(self.focused, MouseGrabber):
@@ -322,8 +328,11 @@ class Container(Selectable, Scrollable, Component):
     def e_MouseMotion(self, **kwargs):
         """egér mozgás kezelése
         
-        Args:
-            kwargs: {pos, rel, button, touch}"""
+        Kwargs:
+            pos (tuple): az mutató pozíciója
+            rel (tuple): az egér relatív elmozdulása
+            button (int): nyomvatartott gomb
+            touch (bool): ?"""
         pos = kwargs['pos']
 
         # Ha a fókuszált componens megfogra az egeret, csak annak küldjük tovább
@@ -350,8 +359,12 @@ class Container(Selectable, Scrollable, Component):
         ha nem akkor a horizontálisnak, ha az látszik. Ha az sem látszik akkor
         nem adjuk tovább az eseményt.
         
-        Args:
-            kwargs: {witch, flipped, x, y, touch}"""
+        Kwargs:
+            witch (?): ?
+            flipped (?): ?
+            x (int): görgő x elmozdulása
+            y (int): görgő y elmozdulása
+            touch (bool): ?"""
         if isinstance(self.focused, Scrollbar):
             self.focused.e_MouseWheel(**kwargs)
         elif self.yscroller.show:
@@ -363,7 +376,7 @@ class Container(Selectable, Scrollable, Component):
         """Adott irányban lévő legközelebbi componenst adja vissza
         
         Args:
-            way: str(left,up,right,down)
+            way (str): left | up | right | down
             
         Return:
             Component | None, ha van elem abban az irányban akkor a legközelebbit
@@ -371,17 +384,17 @@ class Container(Selectable, Scrollable, Component):
         assert way in ['left', 'up', 'right', 'down'], (f"Várt left | up | right "
             f"| dowm, kapott {way}")
         
-        if len(self.selectable) == 0:
+        if len(self.selectables) == 0:
             return None
 
         if self.selected is None:
-            return self.selectable[0]
+            return self.selectables[0]
 
         selected = self.selected
 
         next_item = None
         next_dist = -1
-        for item in self.selectable:
+        for item in self.selectables:
             if item == selected:
                 continue
 
@@ -394,7 +407,7 @@ class Container(Selectable, Scrollable, Component):
                 dist = dist.p1
             elif way == 'down':
                 dist = dist.p2
-            if dist > 0 and (next_dist == -1 or dist < next_dist):
+            if dist > 0 and (next_dist == -1 or dist < next_dist) and item.selectable:
                 next_item = item
                 next_dist = dist
 
@@ -403,8 +416,11 @@ class Container(Selectable, Scrollable, Component):
     def e_KeyDown(self, **kwargs):
         """billentyűzet gombnyomásának lekezelése
         
-        Args:
-            kwargs: {key, mod, unicode, scancode}"""
+        Kwargs:
+            key (int): a billentyű kódja
+            mod (int): módosítóbillentyűk
+            unicode (char): a lenyomott billentyű unicode értéke
+            scancode (int?): a lenyomott billenytű scancode értéke"""
         key = kwargs['key']
 
         # Ha az egeret egy elem elkapta akkor nem kezeljük le az eseményt.
@@ -426,7 +442,7 @@ class Container(Selectable, Scrollable, Component):
             if key == pg.K_ESCAPE and not self.default:
                 self.menu.lose_selection(self)
                 return
-            if len(self.selectable) > 0:
+            if len(self.selectables) > 0:
                 way = None
                 next = None
 
@@ -448,8 +464,11 @@ class Container(Selectable, Scrollable, Component):
     def e_KeyUp(self, **kwargs):
         """billentyűzet gombfelengedésének lekezelése
         
-        Args:
-            kwargs: {key, mod, unicode, scancode}"""
+        Kwargs:
+            key (int): a billentyű kódja
+            mod (int): módosítóbillentyűk
+            unicode (char): a felengedett billentyű unicode értéke
+            scancode (int?): a felengedett billenytű scancode értéke"""
         # Ha az egeret egy elem elkapta akkor nem kezeljük le az eseményt.
         if isinstance(self.focused, MouseGrabber) and self.focused.mouse_grabbed:
             return

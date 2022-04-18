@@ -5,15 +5,12 @@ Nem tisztán menüelem, mivel a működéséhez szükséges a sokoban játék n�
 from __future__ import annotations
 
 import pygame as pg
-from datetime import datetime
 
-import config #TODO: refactiring
-import game.game.loader as loader #TODO: refactoring
-from game.game.space import Space #TODO: refactoring
-import config.saves as save #TODO: refactoring
+from sokoban import config
+from sokoban.data import loader, saves
+from sokoban import Space
 
 from ..components.component import *
-from utils import Pair
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -26,40 +23,41 @@ class SSet(MouseGrabber, Selectable, Component):
     választható.
     
     Attributes:
-        action: callable a kiválasztáskor lefuttadandó metódus
-        set_name: str a set ahonnan a szint van
-        set_info: dict a szet adatai: név, nehézség, leírás, pályák száma
-        stats: dict a játékos teljesítménye ezen a szinten
-        levels_image: pygame.Surface a pályák képe
-        font(property): pg.font.Font a gomb betűtipusa"""
+        action (Callable): a kiválasztáskor lefuttadandó metódus
+        set_name (str): pályakészket neve
+        set_info (dict): {"name": str, "dificulty": int, "description": str}
+        stats (dict): {'moves': (int), 'time': (float), 'best_moves': (int), 'best_time': (float), 'done_levels': int}
+        level_image (pygame.Surface): a pálya képe
+        font(property) (pygame.font.Font): betűtipus"""
     def __init__(self, container: Container, action: Callable, set_name: str,
         **kwargs):
-        """belépési pont
-        
+        """SSet
+
         Args:
-            container: a befogalaló container
-            action: kiválasztás esetén futtatandó metódus
-            set_name: a set neve
-            kwargs: {position, size, sticky}"""
+            container (Container): a befogalaló container
+            action (Callable): visszatérési metódus
+            set_name (str): pályakészlet neve
+            level (int): szint száma
+        """
         Component.__init__(self, container, **kwargs)
 
         assert callable(action), f"Vár calabble típus, kapott {type(action)}"
         self.action = action
         self.set_name = set_name
 
-        self.font = config.get_font(config.BUTTON_FONT, config.DEFAULT_FONT_SIZE)
+        self.font = config.get_font(config.BUTTON_FONT, config.SMALL_FONT_SIZE)
 
         self.set_info = loader.jget_info(None, self.set_name)
         assert self.set_info is not None, (f"Hibás set_nam vagy level: "
             f"{set_name}.")
 
-        self.stats = save.get_set_statistic(self.set_name)
+        self.stats = saves.get_set_statistic(self.set_name)
 
-        self.size = (228, 500) #TODO padding, margin
+        self.size = (228, 400) #TODO padding, margin
 
         self.color['bg'] = config.BUTTON_DEFAULT_COLOR
-        self.color['focus'] = config.BUTTON_FOCUS_COLOR
-        self.color['select'] = config.BUTTON_SELECT_COLOR
+        self.color['focus'] = config.BUTTON_FONT_FOCUS_COLOR
+        self.color['select'] = config.BUTTON_FONT_SELECT_COLOR
         self.color['font'] = config.BUTTON_FONT_COLOR
 
         if 'selected' in kwargs and kwargs['selected']:
@@ -67,8 +65,9 @@ class SSet(MouseGrabber, Selectable, Component):
         else:
             self.select = False
 
-        self.levels_image = pg.Surface((200,300))
-        self.make_levels_image()
+        self.level_image = pg.Surface((200,200))
+        space = Space((200,200), None, self.set_name, 0)
+        space.draw(self.level_image)
 
     @property
     def font(self) -> pg.font.Font:
@@ -85,17 +84,6 @@ class SSet(MouseGrabber, Selectable, Component):
 
         self.updated()
 
-    def make_levels_image(self):
-        """Az első öt pálya képét rajzolja ki"""
-        for level in range(min(loader.jget_levels()-1,4),-1,-1):
-            space = Space(None, self.set_name, level, (200-10*level,200-20*level))
-            space.draw(self.levels_image, Pair(0,0)+Pair(5,40)*level,
-                'd' if level != 0 else 'c') # TODO: space rafactoring...
-            pos = Pair(0,0)+Pair(5,40)*level
-            size = (200-10*level-2,200-20*level)
-            pg.draw.lines(self.levels_image, (255,0,0), True,
-                (pos,(pos+Pair(size[0], 0)),pos+Pair(size),(pos+Pair(0,size[1]))), 2)
-
     def update_image(self):
         """Kirajzolandó kép frissítése."""
         self.image = pg.Surface(self.size, pg.SRCALPHA)
@@ -108,40 +96,44 @@ class SSet(MouseGrabber, Selectable, Component):
             self.image.fill(self.color['bg'])
 
         # Pályák képének kirajzolása
-        self.image.blit(self.levels_image, (14, 14))
+        self.image.blit(self.level_image, (14, 14))
 
         # Név és nehézség
         text = f"{self.set_info['name']} ({self.set_info['dificulty']})"
         rendered = self.font.render(text, True, self.color['font'])
-        self.image.blit(rendered, (14, 328))
+        self.image.blit(rendered, (14, 228))
 
         # Pályák száma a set-ben és az ezekből elvégzettek száma
         done_levels = self.stats['done_levels'] if self.stats else 0
-        text = f"Pályák: {done_levels}/{loader.jget_levels()}"
+        text = f"Pályák: {done_levels}/{loader.jget_levels(self.set_name)}"
         rendered = self.font.render(text, True, self.color['font'])
-        self.image.blit(rendered, (14, 368))
+        self.image.blit(rendered, (14, 258))
         
         # Leírás
         lines = self.set_info['description'].split('\n')
         rendered = self.font.render(lines[0], True, self.color['font'])
-        self.image.blit(rendered, (14, 408))
+        self.image.blit(rendered, (14, 288))
         for i in range(1, len(lines)):
             rendered = self.font.render(lines[i], True, self.color['font'])
-            self.image.blit(rendered, (14, 408 + i * 30))
+            self.image.blit(rendered, (14, 288 + i * 30))
 
     def e_MouseButtonUp(self, **kwargs):
-        """egér mozgás kezelése
+        """egér gombelengedés kezelése
         
-        Args:
-            kwargs: {pos, rel, button, touch}"""
+        Kwargs:
+            pos (tuple): az mutató pozíciója
+            button (int): nyomvatartott gomb
+            touch (bool): ?"""
         if callable(self.action):
             self.action(self)
 
     def e_KeyUp(self, key, **kwargs):
         """billentyűzet gombfelengedésének lekezelése
         
-        Args:
-            key: ...
-            kwargs: {mod, unicode, scancode}"""
+        Kwargs:
+            key (int): a billentyű kódja
+            mod (int): módosítóbillentyűk
+            unicode (char): a felengedett billentyű unicode értéke
+            scancode (int?): a felengedett billenytű scancode értéke"""
         if key in (pg.K_RETURN, pg.K_KP_ENTER) and callable(self.action):
             self.action(self)

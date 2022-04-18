@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pygame as pg
 
-import config #TODO: refactiring
+from sokoban import config
 
 from .component import *
 from utils import Pair
@@ -19,19 +19,22 @@ class Label(Component):
     Container osztályban felhasználható címke.
     
     Attributes:
-        text(property): str a gombbon megjelenő szöveg
-        font(property): pg.font.Font a gomb betűtipusa"""
-    def __init__(self, container: Container, text: str, *args, **kwargs):
+        text(property) (str): a gombbon megjelenő szöveg
+        font(property) (pygame.font.Font): a gomb betűtipusa"""
+    def __init__(self, container: Container, text: str, font_size = config.DEFAULT_FONT_SIZE, **kwargs):
         """belépési pont
         
         Args:
-            container: a befogalaló container
-            text: a gombon megjelenő szüveg
-            kwargs: {position, size, sticky}"""
-        Component.__init__(self, container, *args, **kwargs)
+            container (Container): a befogalaló container
+            text (str): a gombon megjelenő szüveg
+            font_size (int): a szöveg mérete. Defaults to config.DEFAULT_FONT_SIZE.
+        
+        Kwargs:
+            -> Component.__init__(...)"""
+        Component.__init__(self, container, **kwargs)
         
         self.text = text
-        self.font = config.get_font(config.LABEL_FONT, config.DEFAULT_FONT_SIZE)
+        self.font = config.get_font(config.LABEL_FONT, font_size)
 
         self.color['bg'] = config.LABEL_DEFAULT_COLOR
         self.color['font'] = config.LABEL_FONT_COLOR

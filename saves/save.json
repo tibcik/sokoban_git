@@ -1,1 +1,23 @@
-{"saves": [{"player_name": "R\u00e9pal\u00e9", "current_set": "default", "current_level": 0, "current_setup": {}, "done": {}, "last_player": true}, {}, {}]}
+{
+    "saves": [
+        {
+            "player_name": "Teszt",
+            "current_set": "default",
+            "current_level": 0,
+            "current_setup": {},
+            "done": {
+                "default": [
+                    {
+                        "moves": 0,
+                        "time": 0,
+                        "best_moves": 0,
+                        "best_time": 0
+                    }
+                ]
+            },
+            "last_player": true
+        },
+        {},
+        {}
+    ]
+}
