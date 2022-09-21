@@ -32,11 +32,13 @@ import os
 import json
 from . import loader
 
+from sokoban import config
+
 from typing import TYPE_CHECKING, NoReturn
 if TYPE_CHECKING:
     pass
 
-save_file_path = './saves/'
+save_file_path = config.DATA_PATH
 save_file_name = 'save.json'
 
 saves = {'saves': [{},{},{}]}

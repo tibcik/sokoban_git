@@ -43,13 +43,13 @@ class Statistic(pg.sprite.Sprite):
         """Statistic"""
         super().__init__()
 
-        self.image = pg.Surface((350, 32), pg.SRCALPHA)
+        self.image = pg.Surface((500, 32), pg.SRCALPHA)
         self.rect = self.image.get_rect()
         self.rect.topright = (0, 0)
 
         self.font = config.get_font(DEFAULT_FONT, SMALL_FONT_SIZE)
         
-        self.update(0,0)
+        self.update(0,0,"Megoldás - ?")
 
     def format_time(self, elapsed_time: float) -> str:
         """Másodpercek átalakítása szöveggé
@@ -79,7 +79,7 @@ class Statistic(pg.sprite.Sprite):
 
         return "Lépések: {:4d}".format(moves)
 
-    def update(self, elapsed_time: float, moves: int):
+    def update(self, elapsed_time: float, moves: int, solution):
         """adatok frissítása
 
         Args:
@@ -90,6 +90,9 @@ class Statistic(pg.sprite.Sprite):
             config.STATISTIC_FONT_COLOR)
         moves_text = self.font.render(self.format_moves(moves), True,
             config.STATISTIC_FONT_COLOR)
+        solution_text = self.font.render(solution, True,
+            config.STATISTIC_FONT_COLOR)
         self.image.fill(config.STATISTIC_BG_COLOR)
         self.image.blit(elapsed_time_text, (10, 5))
         self.image.blit(moves_text, (180, 5))
+        self.image.blit(solution_text, (350, 5))

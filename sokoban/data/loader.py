@@ -32,6 +32,8 @@ from utils.asserts import *
 import unicodedata
 import re
 
+from sokoban import config
+
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     pass
@@ -56,7 +58,7 @@ SPACE_TYPES = {
                 '*': SOKOBAN_FLOOR | SOKOBAN_GOAL | SOKOBAN_BOX
                 }
 
-SETS_DIR = './sets/'
+SETS_DIR = config.SETS_PATH
 DEFAULT_SET = 'default'
 
 # Modul változó az éppen használt set tárolására

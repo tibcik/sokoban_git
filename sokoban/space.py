@@ -4,6 +4,7 @@ A Space osztály a játéktár megjelenítéséért felel, használható bárhol
 meg szeretnénk jeleníteni egy pályát.
 """
 from __future__ import annotations
+from math import floor
 
 import pygame as pg
 import numpy as np
@@ -79,6 +80,11 @@ class Space(pg.sprite.Sprite):
         self.boxes = pg.sprite.Group()
         self.player = None
 
+        self.solution = ""
+        self.solution_objects = pg.sprite.Group()
+
+        self.static_image = None
+
         self.editor = False
 
         if self.level is not None:
@@ -112,8 +118,8 @@ class Space(pg.sprite.Sprite):
                         if visual_space_types[t]['var'] is None and t == loader.SOKOBAN_PLAYER:
                             self.player = Player(x, y, self.game)
                         elif visual_space_types[t]['var'] is not None:
-                            if not self.editor and t == loader.SOKOBAN_EMPTY:
-                                continue
+                            #if not self.editor and t == loader.SOKOBAN_EMPTY:
+                            #    continue
                             getattr(self, visual_space_types[t]['var']).add(visual_space_types[t]['obj'](x, y))
 
         self.size = Pair(data.shape[1], data.shape[0])
@@ -132,6 +138,28 @@ class Space(pg.sprite.Sprite):
 
         # Eltolás és Zsugorítás/Nagyítás arányának meghatározása
         self.recalc_size()
+    
+    def __iter__(self):
+        self.__element_index = 0
+        self.__delimiter = False
+        return self
+
+    def __next__(self):
+        if self.__delimiter:
+            self.__delimiter = False
+            return None
+
+        x = self.__element_index % self.raw.shape[1]
+        y = floor(self.__element_index / self.raw.shape[1])
+
+        if y >= self.raw.shape[0]:
+            raise StopIteration
+
+        self.__element_index += 1
+        if self.__element_index % self.raw.shape[1] == 0:
+            self.__delimiter = True
+
+        return self.raw[y,x]
 
     def __getitem__(self, i):
         """adatok visszaadása a kétdimenziós tömbböl"""
@@ -270,8 +298,39 @@ class Space(pg.sprite.Sprite):
         bg.fill(SPACE_BG_COLOR)
         canvas = pg.Surface(self.size * TILE_RESOLUTION, pg.SRCALPHA)
 
+        if self.static_image is None:
+            self.static_image = pg.Surface(self.size * TILE_RESOLUTION, pg.SRCALPHA)
+            for obj in self.walls:
+                obj.draw(self.static_image)
+            for obj in self.floors:
+                obj.draw(self.static_image)
+            for obj in self.goals:
+                obj.draw(self.static_image)
+            for obj in self.empties:
+                obj.draw(self.static_image)
+            
+            if self.scale != 1:
+                self.static_image = pg.transform.scale(self.static_image, self.size * self.scale * 32)
+
         # Objektumok kirajzolása
-        for obj in self.objects:
+        for obj in self.boxes:
+            obj.draw(canvas)
+        self.player.draw(canvas)
+
+
+        tmp_player = Player(self.player.pos.p1, self.player.pos.p2, None)
+        self.solution_objects.empty()
+        rep_table = {'u': Pair(0,-1), 'r': Pair(1,0), 'd': Pair(0,1), 'l': Pair(-1,0)}
+        if self.solution != "":
+            for move_char in self.solution:
+                tmp_player.move(rep_table[move_char.lower()])
+                if move_char.isupper():
+                    self.solution_objects.add(Cross(tmp_player.pos.p1, tmp_player.pos.p2))
+                    break
+                else:
+                    self.solution_objects.add(Arrow(tmp_player.pos.p1, tmp_player.pos.p2, move_char.lower()))
+
+        for obj in self.solution_objects:
             obj.draw(canvas)
         
         # Négyzetrács kirajzolása
@@ -293,5 +352,7 @@ class Space(pg.sprite.Sprite):
         else:
             rect.center = self.offset
         
+        #bg.blit(canvas, rect)
+        bg.blit(self.static_image, rect)
         bg.blit(canvas, rect)
         surface.blit(bg, pos)

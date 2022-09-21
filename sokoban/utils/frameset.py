@@ -49,7 +49,7 @@ class Framesets:
         self.frames = {}
         self.frame = {}
 
-        with open(f"./skins/{config.skin_name}/skin.json") as f: # Hibakezelés
+        with open(f"{config.SKIN_PATH}{config.skin_name}/skin.json") as f: # Hibakezelés
             data = json.load(f)
             self.data = data["framesets"]
 
@@ -65,7 +65,7 @@ class Framesets:
                 continue
             for img_path in self.data[frameset]['images']:
                 if img_path not in self.images:
-                    self.images[img_path] = pg.image.load(f"./skins/{config.skin_name}/{img_path}").convert_alpha()
+                    self.images[img_path] = pg.image.load(f"{config.SKIN_PATH}{config.skin_name}/{img_path}").convert_alpha()
 
     def load_frameset(self):
         """Képkockák betöltése
@@ -127,6 +127,8 @@ class Framesets:
             
             if self.size != (0, 0):
                 sprite = pg.transform.scale(sprite, self.size)
+            if 'rotate' in frameset:
+                sprite = pg.transform.rotate(sprite, frameset['rotate'])
             self.frames[frameset_name].append(sprite)
 
     def get_next_frame(self, frameset_name: str) -> pg.Surface:
@@ -181,3 +183,6 @@ class Framesets:
             bool: képkocka létetik-e
         """
         return frameset_name in self.frames
+
+    def get_frame_time(sefl):
+        pass

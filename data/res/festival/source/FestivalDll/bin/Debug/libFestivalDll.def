@@ -1,0 +1,3 @@
+EXPORTS
+    DllMain @1
+    RunFestival @2

@@ -38,7 +38,7 @@ class MainController:
 
     def run(self):
         while self.running:
-            self.clock.tick(120)
+            self.clock.tick(30)
             self.screen.fill((100,100,100))
 
             for event in pg.event.get():
@@ -95,9 +95,6 @@ class MainController:
     def add_controller(self, controller):
         self.controllers.add(controller)
         self.active_controller = controller
-
-    def change_active_controller(self, controller):
-        self.active_controller = controller
     
     def remove_controller(self, new_controller, controller):
         self.controllers.remove(controller)
@@ -107,68 +104,6 @@ class MainController:
         self.controllers.empty()
         self.controllers.add(controller)
         self.active_controller = controller
-
-    def init_game(self, set_name, level):
-        self.game = Game(self, self.screen, set_name, level)
-        self.controllers.add(self.game)
-        self.active_controller = self.game
-
-    def level_clear(self):
-        pass
-
-    def new_game(self, *args, **kwargs):
-        self.show = False
-        self.controllers.empty()
-        
-        menu = menus.GameSlotSelector(self, self.screen)
-        self.controllers.add(menu)
-        self.active_controller = menu
-        """
-        self.game = Game(self, self.screen, 'default2', 0)
-        self.controllers.add(self.game)
-        self.active_controller = self.game
-        """
-        self.show = True
-
-    def show_next_level(self):
-        self.show = False
-        next_level_menu = NextLevelMenu(self, self.screen)
-        self.controllers.add(next_level_menu)
-        self.active_controller = next_level_menu
-        self.show = True
-
-    def next_level(self, *args, **kwargs):
-        self.show = False
-        self.game.next_level()
-        self.controllers.empty()
-        self.controllers.add(self.game)
-        self.active_controller = self.game
-        self.show = True
-
-    def reload(self, *args, **kwargs):
-        self.show = False
-        self.game.reload()
-        self.controllers.empty()
-        self.controllers.add(self.game)
-        self.active_controller = self.game
-        self.show = True
-
-    def exit_to_menu(self, *args, **kwargs):
-        self.show = False
-        self.game = None
-        menu = MainMenu(self, self.screen)
-        self.controllers.add(menu)
-        #rgame = Game(self, screen)
-        #self.controllers.add(rgame)
-        self.active_controller = menu
-        self.show = True
-
-    def show_editor_overlay(self, editor):
-        menu = menus.EditorOverlayMenu(self, self.screen, editor)
-        self.add_controller(menu)
-
-    def editor(self):
-        pass
 
     def exit(self, _):
         self.running = False

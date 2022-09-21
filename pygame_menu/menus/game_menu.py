@@ -80,17 +80,29 @@ class GameMenu(Menu):
         l = Label(self.main_container, f"Legjobb lépés a pályán: {level_stat['best_moves']}", position=(10,1/8 + y_offset), font_size=config.SMALL_FONT_SIZE)
 
         y_offset = 0
-        b = Button(self.main_container, "Folytatás", self.continue_game, position=(10,6/8), selected=True)
-        y_offset = b.size[1] + 10
-        b = Button(self.main_container, "Újrakezdés", self.restart_game, position=(10,6/8+y_offset))
+        b = Button(self.main_container, "Folytatás", self.continue_game, position=(10,12/16), selected=True)
         y_offset += b.size[1] + 10
-        b = Button(self.main_container, "Kilépés a menübe", self.exit_to_menu, position=(10,6/8+y_offset))
+        if self.game.show_solution:
+            b = Button(self.main_container, "Megoldás elrejtése", self.show_solution, position=(12,12/16+y_offset))
+        else:
+            b = Button(self.main_container, "Megoldás mutatása", self.show_solution, position=(12,12/16+y_offset))
+        y_offset += b.size[1] + 10
+        b = Button(self.main_container, "Újrakezdés", self.restart_game, position=(10,12/16+y_offset))
+        y_offset += b.size[1] + 10
+        b = Button(self.main_container, "Kilépés a menübe", self.exit_to_menu, position=(10,12/16+y_offset))
 
     def continue_game(self, _):
         """Folytatás gomb lenyomására lefutó metódus
         """
         self.controller.continue_game(self.game, self)
-        self.game.run = 1
+        self.game.resume()
+
+    def show_solution(self, _):
+        """Megoldás gomb lenyomására lefutó metódus
+        """
+        self.controller.continue_game(self.game, self)
+        self.game.run_solver()
+        self.game.resume()
 
     def restart_game(self, _):
         """Újrakezdés gomb lenyomására lefutó metódus
