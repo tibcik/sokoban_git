@@ -19,7 +19,7 @@ set_font_base_dir(FONT_PATH)
 
 # Alapértelmezett skin
 skin_name = "kenney"
-# Alapértelmezett handerő
+# Alapértelmezett hangerő
 music_volume = 10
 sound_volume = 10
 # Alapértelmezett felbontás
