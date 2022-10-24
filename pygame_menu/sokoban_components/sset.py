@@ -1,4 +1,20 @@
-"""Set választó osztály modulja
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: sset.py
+Verzió: 1.0.0
+--------------------
+pygame_menu.sokoban_componenets.sset
+
+Set választó osztály modulja
 
 Nem tisztán menüelem, mivel a működéséhez szükséges a sokoban játék néhány osztálya.
 """
@@ -30,7 +46,7 @@ class SSet(MouseGrabber, Selectable, Component):
         level_image (pygame.Surface): a pálya képe
         font(property) (pygame.font.Font): betűtipus"""
     def __init__(self, container: Container, action: Callable, set_name: str,
-        **kwargs):
+        show_info: bool = True, **kwargs):
         """SSet
 
         Args:
@@ -51,7 +67,9 @@ class SSet(MouseGrabber, Selectable, Component):
         assert self.set_info is not None, (f"Hibás set_nam vagy level: "
             f"{set_name}.")
 
-        self.stats = saves.get_set_statistic(self.set_name)
+        self.stats = None
+        if show_info:
+            self.stats = saves.get_set_statistic(self.set_name)
 
         self.size = (228, 400) #TODO padding, margin
 

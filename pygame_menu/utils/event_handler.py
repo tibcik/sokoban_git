@@ -1,4 +1,20 @@
-"""A pygame Event objektumát fogadó és azt lekezelő ősosztály tartalmazó modul
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: event_handler.py
+Verzió: 1.0.0
+--------------------
+pygame_menu.utils.event_handler
+
+A pygame Event objektumát fogadó és azt lekezelő ősosztály tartalmazó modul
 
 A fejlesztés segítése céljából az osztály tartalmazza a lehetséges pygame
 eventeket mint metódusok és logolja azokat az eventeket amik nem illeszthetőek
@@ -6,11 +22,11 @@ egyik metódusra sem.
 Egy másik funkció amit ellát pedig regisztrálja a gomblenyomásokat és azok
 felengedését a billentyűzeten, egéren és controlleren így segítve a nyomva
 tartott gombok felismerését az abból eredő események lekezelésének a lehetőségét.
+
+Osztályok:
+    EventHandler
 """
 import pygame as pg
-
-import log.log
-logger = log.log.init("pygame_menu.utils.EventHandler")
 
 class EventHandler:
     """A pygame Event objektumát fogadó és azt lekezelő ősosztály tartalmazó modul
@@ -67,9 +83,13 @@ class EventHandler:
         self._pge_mouse_leaved = value
 
     def event(self, e: pg.event.Event):
-        """Event lekezelhetőségének vizsgálata és továbbküldése a lekezelőnek"""
+        """Event lekezelhetőségének vizsgálata és továbbküldése a lekezelőnek
+        
+        Args:
+            e: pygame.event.Event objektum"""
         # assert isinstance(e, pg.event.Event), f"Várt pg.event.Event, kapott {type(e)}" TODO: ez itt miért nem jó?
         name = pg.event.event_name(e.type)
+
         if not hasattr(self, f"e_{name}"):
             name = "Unknown"
 
@@ -88,7 +108,6 @@ class EventHandler:
             self.pge_joy_pressed_keys.append(e.__dict__)
     
     def _registerKeyRelease(self, e: pg.event.Event):
-        """Gombelengedés következtében az adataok törlése a megfelelő listából"""
         key_list = None
         if e.type == pg.KEYUP:
             key_list = []
@@ -155,10 +174,10 @@ class EventHandler:
         return self.pge_mouse_leaved
     
     def e_Unknown(self, **e):
-        logger.debug(f"Ismeretlen event: {e.__repr__()}")
-
-    # A fejlesztés megkönnyítése érdekében megírt metódusok, a végső programnak
-    # nem részei.
+        """Ismeretlen esemény által meghívott metódus. A metódus argumentumai
+        nem ismertek.
+        """
+        pass
 
     def e_Quit(self, **kwargs):
         """kwargs: {}"""

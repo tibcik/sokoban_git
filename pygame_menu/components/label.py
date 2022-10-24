@@ -1,4 +1,23 @@
-"""Label osztály modulja.
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: label.py
+Verzió: 1.0.0
+--------------------
+pygame_menu.components.label
+
+Címke menüelem.
+
+Osztályok:
+    Label
 """
 from __future__ import annotations
 
@@ -8,6 +27,8 @@ from sokoban import config
 
 from .component import *
 from utils import Pair
+
+import utils.exceptions as ex
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -46,8 +67,12 @@ class Label(Component):
 
     @text.setter
     def text(self, value: str):
-        """setter"""
-        assert type(value) == str, (f"Várt str típus, kapott {type(value)}")
+        """setter
+        
+        Raises:
+            ValueError: Ha nem str típusú"""
+        ex.arg_type_exception('value', value, str)
+        
         self._text = value
         # Ha a régi méret egyenlő a kép méretével akkor nincs előre beállított
         # méret. Az új méret a kép mérete lesz.
@@ -65,9 +90,11 @@ class Label(Component):
 
     @font.setter
     def font(self, value: pg.font.Font):
-        """setter"""
-        assert type(value) == pg.font.Font, (f"Várt pygame.font.Font típus, "
-            f"kapott {type(value)}")
+        """setter
+        
+        Raises:
+            ValueError: Ha nem pygame.font.Font osztály leszármazottja"""
+        ex.arg_instance_exception('value', value, pg.font.Font)
         
         self._font = value
         self.text = self._text

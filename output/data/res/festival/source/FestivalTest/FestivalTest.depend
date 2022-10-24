@@ -1,7 +1,0 @@
-# depslib dependency file v1.0
-1662366601 source:d:\programming\python\szakdolgozat\sokoban\data\res\festival\source\festivaltest\main.cpp
-	<windows.h>
-	<tchar.h>
-	<stdio.h>
-	<strsafe.h>
-

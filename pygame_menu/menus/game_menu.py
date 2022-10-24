@@ -1,4 +1,23 @@
-"""Játék közben megjelenő menü
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: game_menu.py
+Verzió: 1.0.0
+--------------------
+pygame_menu.menus.game_menu
+
+Játék közben megjelenő menü
+
+Osztályok:
+    GameMenu
 """
 from __future__ import annotations
 
@@ -83,7 +102,7 @@ class GameMenu(Menu):
         b = Button(self.main_container, "Folytatás", self.continue_game, position=(10,12/16), selected=True)
         y_offset += b.size[1] + 10
         if self.game.show_solution:
-            b = Button(self.main_container, "Megoldás elrejtése", self.show_solution, position=(12,12/16+y_offset))
+            b = Button(self.main_container, "Megoldás elrejtése", self.hide_solution, position=(12,12/16+y_offset))
         else:
             b = Button(self.main_container, "Megoldás mutatása", self.show_solution, position=(12,12/16+y_offset))
         y_offset += b.size[1] + 10
@@ -102,6 +121,14 @@ class GameMenu(Menu):
         """
         self.controller.continue_game(self.game, self)
         self.game.run_solver()
+        self.game.show_solution = True
+        self.game.resume()
+
+    def hide_solution(self, _):
+        """Megoldás elrejtése gomb lenyomására lefutó metódus
+        """
+        self.controller.continue_game(self.game, self)
+        self.game.hide_solution()
         self.game.resume()
 
     def restart_game(self, _):

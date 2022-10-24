@@ -1,4 +1,20 @@
-"""Menu component ősosztályok.
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: component.py
+Verzió: 1.0.0
+--------------------
+pygame_menu.components.component
+
+Menu component ősosztályok.
 
 Mineden menu és container componens a Component osztály leszármazottja. Ezek
 mellett a viselkedésük megváltoztatására van néhány egyébb osztály amelynek
@@ -20,6 +36,23 @@ Használat:
     class Foo(Component):
     
     class Bar(MouseGrabber, Selectable, Component):
+
+Osztályok:
+    Component
+    Scrollable
+    Selectable
+    MouseGrabber
+    KeyboardGrabber
+Konstansok:
+    STICKY_UPLEFT
+    STICKY_UP
+    STICKY_UPRIGHT
+    STICKY_RIGHT
+    STICKY_DOWNRIGTH
+    STICKY_DOWN
+    STICKY_DOWNLEFT
+    STICKY_LEFT
+    STICKY_CENTER
 """
 from __future__ import annotations
 
@@ -28,9 +61,11 @@ import pygame as pg
 from ..utils import EventHandler
 from utils import Pair, betweens
 
+import utils.exceptions as ex
+
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from .component import Container
+    from .container import Container
 
 STICKY_UPLEFT = (0,0)
 STICKY_UP = (0.5,0)
@@ -42,8 +77,6 @@ STICKY_DOWNLEFT = (0,1)
 STICKY_LEFT = (0,0.5)
 STICKY_CENTER = (0.5,0.5)
 
-# EventHandler csak a fejlesztés miatt ősosztály. A kész programnak nem
-# kell, hogy része legyen.
 class Component(EventHandler, pg.sprite.Sprite):
     """Ősosztálya minden menu és container componensnek.
 
@@ -97,6 +130,8 @@ class Component(EventHandler, pg.sprite.Sprite):
         self.focus = False
         self.show = True
 
+        self._updated = False
+
         if self.container is not None:
             self.container.add(self)
 
@@ -121,9 +156,12 @@ class Component(EventHandler, pg.sprite.Sprite):
         """setter
         
         Args:
-            value (tuple[int,int]): bármilyen legalább kételemű listaszerű objektum"""
-        assert hasattr(value, "__getitem__") and len(value) > 1, (f"Várt "
-            f"list, tuple, Pair típus, kapott {type(value)}.")
+            value (tuple[int,int]): bármilyen legalább kételemű listaszerű objektum
+            
+        Raises:
+            ValueError: Ha nem listaszerű
+            IndexError: Ha kevesebb mint kételemű"""
+        ex.arg_index_exception('value', value, 2)
 
         value = Pair(value)
         ivalue = Pair(value)
@@ -147,9 +185,12 @@ class Component(EventHandler, pg.sprite.Sprite):
         """setter
         
         Args:
-            value (tuple[int, int]): bármilyen legalább kételemű listaszerű objektum"""
-        assert hasattr(value, "__getitem__") and len(value) > 1, (f"Várt "
-            f"list, tuple, Pair típus, kapott {type(value)}.")
+            value (tuple[int, int]): bármilyen legalább kételemű listaszerű objektum
+            
+        Raises:
+            ValueError: Ha nem listaszerű
+            IndexError: Ha kevesebb mint kételemű"""
+        ex.arg_index_exception('value', value, 2)
 
         self._size = Pair(value)
 
@@ -165,9 +206,11 @@ class Component(EventHandler, pg.sprite.Sprite):
         """setter
         
         Args:
-            value (tuple[int,int]): a STICKY konstansok egyike, vagy bármely kételemű listaszerű objektum"""
-        assert hasattr(value, "__getitem__") and len(value) > 1, (f"Várt "
-            f"list, tuple, Pair típus, kapott {type(value)}.")
+            value (tuple[int,int]): a STICKY konstansok egyike, vagy bármely kételemű listaszerű objektum
+            
+        Raises:
+            ValueError: Ha a várt konstansok egyike"""
+        ex.arg_constant_exeption('value', value, [globals()[x] for x in globals() if len(x) > 7 and x[0:7] == "STICKY_"])
 
         self._sticky = value
 
@@ -260,9 +303,13 @@ class Scrollable:
         
         Attr:
             value (dict | tuple): megadja vagy a relatív vagy az abszolút scroll pozíciót
-                dict: {"x": abszolút, "y": absoulút, "relx": relatív, "rely": relatív}"""
-        assert isinstance(self, Component), (f"Az ősosztályok között ott kell "
-            f"lennie a pygame_menu.components.Component osztálynak!")
+                dict: {"x": abszolút, "y": absoulút, "relx": relatív, "rely": relatív}
+                
+        Raises:
+            TypeError: Ha nem a Component osztállyal együtt használjuk
+            ValueError: Ha nem dict és nem listaszerű
+            IndexError: Ha listaszerű, de kevesebb mint kételemű"""
+        ex.instance_exception(self, Component)
 
         # Ha dict akkor a pozíciók meghatározása
         if type(value) == dict:
@@ -272,8 +319,7 @@ class Scrollable:
             y += value['rely'] if 'rely' in value else 0
             value = (x, y)
 
-        assert hasattr(value, "__getitem__") and len(value) > 1, (f"Várt "
-            f"list, tuple, Pair típus, kapott {type(value)}.")
+        ex.arg_index_exception('value', value, 2)
 
         x = betweens(value[0], 0, self.image.get_width() - self.size[0])
         y = betweens(value[1], 0, self.image.get_height() - self.size[1])
@@ -285,9 +331,11 @@ class Scrollable:
     def area(self) -> pg.rect.Rect:
         """getter
         
-        A conponens mérete pygame.rect.Rect objektumként scroll pozícióval"""
-        assert isinstance(self, Component), (f"Az ősosztályok között ott kell "
-            f"lennie a pygame_menu.components.Component osztálynak!")
+        A conponens mérete pygame.rect.Rect objektumként scroll pozícióval
+        
+        Raises:
+            TypeError: Ha nem a Component osztállyal együtt használjuk"""
+        ex.instance_exception(self, Component)
         
         return pg.rect.Rect(self.scroll, self.size)
 
@@ -303,9 +351,11 @@ class Selectable:
     """
     @property
     def color(self) -> dict:
-        """getter"""
-        assert isinstance(self, Component), (f"Az ősosztályok között ott kell "
-            f"lennie a pygame_menu.components.Component osztálynak!")
+        """getter
+
+        Raises:
+            TypeError: Ha nem a Component osztállyal együtt használjuk"""
+        ex.instance_exception(self, Component)
         
         if 'select' not in self._colors:
             self._colors['select'] = (0,255,0,255)
@@ -334,19 +384,12 @@ class Selectable:
     def select(self, value: bool):
         """setter
         
-        A kiválasztást visszajelezzük az container osztálynak"""
-        assert isinstance(self, Component), (f"Az ősosztályok között ott kell "
-            f"lennie a pygame_menu.components.Component osztálynak!")
+        A kiválasztást visszajelezzük az container osztálynak
         
-        """TODO: ezzel itt van valami
-        if value:
-            if self.container is not None:
-                self.container.selected = self
-        else:
-            # Ha a containerben a kiválasztott elem ez az obejtum akkor ezt
-            # megszüntetjük
-            if self.container is not None and self.container.selected == self:
-                self.container.selected = None"""
+        Raises:
+            TypeError: Ha nem a Component osztállyal együtt használjuk"""
+        ex.instance_exception(self, Component)
+        
         self._selected = value
 
         self.updated()
@@ -374,7 +417,12 @@ class Selectable:
 
     @focus.setter
     def focus(self, value: bool):
-        """setter"""
+        """setter
+
+        Raises:
+            TypeError: Ha nem a Component osztállyal együtt használjuk"""
+        ex.instance_exception(self, Component)
+
         if self.selectable:
             self._focus = value
         else:
@@ -401,9 +449,11 @@ class MouseGrabber:
 
     @mouse_grabbed.setter
     def mouse_grabbed(self, value: bool):
-        """setter"""
-        assert isinstance(self, Component), (f"Az ősosztályok között ott kell "
-            f"lennie a pygame_menu.components.Component osztálynak!")
+        """setter
+
+        Raises:
+            TypeError: Ha nem a Component osztállyal együtt használjuk"""
+        ex.instance_exception(self, Component)
 
         self._mouse_grabbed = value
 
@@ -436,9 +486,11 @@ class KeyboardGrabber:
 
     @keyboard_grabbed.setter
     def keyboard_grabbed(self, value: bool):
-        """setter"""
-        assert isinstance(self, Component), (f"Az ősosztályok között ott kell "
-            f"lennie a pygame_menu.components.Component osztálynak!")
+        """setter
+
+        Raises:
+            TypeError: Ha nem a Component osztállyal együtt használjuk"""
+        ex.instance_exception(self, Component)
         
         self._keyboard_grabbed = value
 

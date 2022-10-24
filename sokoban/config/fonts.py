@@ -1,4 +1,38 @@
-"""Használt betűkészletek betöltése"""
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: fonts.py
+Verzió: 1.0.0
+--------------------
+sokoban.config.fonts
+
+Betűkészletek
+
+Metódusok:
+    set_font_base_dir
+    get_font
+
+Kosntansok:
+    SMALLEST_FONT_SIZE
+    SMALL_FONT_SIZE
+    DEFAULT_FONT_SIZE
+    BIG_FONT_SIZE
+    BIGGEST_FONT_SIZE
+    DEFAULT_FONT
+    BUTTON_FONT
+    LABEL_FONT
+    TEXTENTRY_FONT
+    SELECT_FONT
+    FONT_BASE_DIR
+"""
 import pygame as pg
 
 SMALLEST_FONT_SIZE = 12
@@ -18,6 +52,11 @@ FONT_BASE_DIR = ''
 fonts = {}
 
 def set_font_base_dir(path: str):
+    """set_font_base_dir Betűkészletek mappa beállítása
+
+    Args:
+        path (str): mappa elérési útvonala
+    """
     global FONT_BASE_DIR
     FONT_BASE_DIR = path
 

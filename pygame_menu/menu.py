@@ -1,4 +1,20 @@
-"""Menu osztály tárolására szolgáló belső modul
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: menu.py
+Verzió: 1.0.0
+--------------------
+pygame_menu.menu
+
+Menu osztály tárolására szolgáló belső modul
 
 Az osztály a pygame.sprite.Sprite osutály leszármazottja, ezért a
 pygame.sprite.Group objektumhoz hozzáadható.
@@ -11,7 +27,6 @@ from utils import Pair
 
 from .utils import EventHandler
 from .components import Container
-from .components.component import MouseGrabber
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -28,7 +43,8 @@ class Menu(EventHandler, pg.sprite.Sprite):
         containers: containerek tárolására való lista
         focused: az a container amin az egérmutató áll, vagy ami előválasztott
             állapotban van
-        default: a default container"""
+        default: a default container
+        foixes: az kiválasztott container rögzítettségét jelzi"""
     def __init__(self):
         """init metódus"""
         pg.sprite.Sprite.__init__(self)

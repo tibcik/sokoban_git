@@ -1,4 +1,24 @@
-"""TextEntry osztály modulja
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: textentry.py
+Verzió: 1.0.0
+--------------------
+pygame_menu.components.textentry
+
+Szövegbeviteli menüelemek
+
+Osztályok:
+    TextEntry
+    MultiTextEntry
 """
 from __future__ import annotations
 
@@ -8,6 +28,8 @@ from sokoban import config
 
 from .component import *
 from utils import Pair
+
+import utils.exceptions as ex
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -60,8 +82,11 @@ class TextEntry(Scrollable, KeyboardGrabber, Selectable, Component):
 
     @value.setter
     def value(self, value: str):
-        """setter"""
-        assert type(value) == str, (f"Várt str típus, kapott {type(value)}")
+        """setter
+        
+        Raises:
+            ValueError: Ha nem str típusú"""
+        ex.arg_type_exception('value', value, str)
         self._value = value
 
         self.updated()
@@ -73,9 +98,11 @@ class TextEntry(Scrollable, KeyboardGrabber, Selectable, Component):
 
     @font.setter
     def font(self, value: pg.font.Font):
-        """setter"""
-        assert type(value) == pg.font.Font, (f"Várt pygame.font.Font típus, "
-            f"kapott {type(value)}")
+        """setter
+        
+        Raises:
+            ValueError: Ha nem pygame.font.Font osztály leszármazottja"""
+        ex.arg_instance_exception('value', value, pg.font.Font)
         
         self._font = value
 

@@ -1,7 +1,26 @@
-"""Játéktér modulja
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: space.py
+Verzió: 1.0.0
+--------------------
+sokoban.space
+
+Játéktér csomagja
 
 A Space osztály a játéktár megjelenítéséért felel, használható bárhol ahol
 meg szeretnénk jeleníteni egy pályát.
+
+Osztályok:
+    Space
 """
 from __future__ import annotations
 from math import floor
@@ -10,9 +29,10 @@ import pygame as pg
 import numpy as np
 
 from .objects import *
-from utils import Pair
+from utils import Pair, betweens
 from .data import loader
 from .config import TILE_RESOLUTION, SPACE_BG_COLOR
+#from pygame_menu.utils import image_loader
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -44,15 +64,17 @@ class Space(pg.sprite.Sprite):
         scale: floot a megjelenítésre szükséges hely és a tényleges hely arányszáma
         offset: Pair x, y eltolás értéke(pl.: a pálya közepré igazítása érdekében)
         raw: NumpyArray a pálya aktuális állását replezentáló két dimenziós tömb
-        editor: bool kapcsoló ami jelzi, hogy az objektumot a játékon vagy a szerkesztőn
-            belül használjuk-e
-
+        objects (pygame.sprite.Group): a játékréen megjelenő objektumok gyűjteménye
         empties: pygame.sprite.Group a játéktéren kívüli csempék gyűjteménye
         floors: pygame.sprite.Group a játéktéren belüli csempék(padló) gyűjteménye
         walls: pygame.sprite.Group a fal csempék gyűjteménye
         goals: pygame.sprite.Group a dobozok végső helyeinek gyűjteménye
         boxes: pygame.sprite.Group a dobozok gyűjteménye
-        player: sokoban.objects.Player a karakter objektuma"""
+        player: sokoban.objects.Player a karakter objektuma
+        solution (str): megoldás karakterlánca
+        solution_objects (pygame.sprite.Group): a megoldás megjelenítéséhez szükséges objektumok gyűjteménye
+        static_image (pygame.Surface): a statikus objektumok képe
+        background (pygame.Surface): háttérkép"""
     def __init__(self, space_size: Pair, game: Game = None, set_name: str = None,
         level: int = None):
         """belépési pont
@@ -70,7 +92,7 @@ class Space(pg.sprite.Sprite):
         self.size = Pair(0,0)
         self.scale = 1
         self.offset = Pair(0,0)
-        self.raw = None
+        self.raw: np.ndarray = None
 
         self.objects = pg.sprite.Group()
         self.empties = pg.sprite.Group()
@@ -84,8 +106,8 @@ class Space(pg.sprite.Sprite):
         self.solution_objects = pg.sprite.Group()
 
         self.static_image = None
-
-        self.editor = False
+        from pygame_menu.utils import image_loader
+        self.background = image_loader("game_back.png")
 
         if self.level is not None:
             self.init_level()
@@ -93,7 +115,7 @@ class Space(pg.sprite.Sprite):
     def init_level(self):
         """Meglévő pálya betöltése
         """
-        assert self.set_name in loader.jget_sets(), (f"A \"{self.set_name}\" nem"
+        assert loader.jget_info(None, self.set_name) is not None, (f"A \"{self.set_name}\" nem"
             "egy létező pályakészlet!")
         assert self.level < loader.jget_levels(self.set_name), (f"A {self.level}. "
             f" pálya nem része a {self.set_name} pályakészletnek!")
@@ -101,7 +123,7 @@ class Space(pg.sprite.Sprite):
         data = loader.jget_data(self.level, self.set_name)
         self.init_level_data(data)
 
-    def init_level_data(self, data):
+    def init_level_data(self, data: np.ndarray):
         """Pálya betöltése
         
         Args:
@@ -186,23 +208,6 @@ class Space(pg.sprite.Sprite):
 
         self.raw[y,x] = value
 
-        # Ha a Space-t a pályaszerkesztő használja a pálya adatainak megváltozása
-        # következtében a látható objektumokat is meg kell változtatni.
-        if self.editor:
-            empty = Empty(x, y)
-            pg.sprite.spritecollide(empty, self.objects, True)
-            for t in visual_space_types:
-                if t & value:
-                    if t == loader.SOKOBAN_PLAYER:
-                        v_obj = visual_space_types[t]['obj'](x, y, self.game)
-                    else:
-                        v_obj = visual_space_types[t]['obj'](x, y)
-                        getattr(self, visual_space_types[t]['var']).add(v_obj)
-                    self.objects.add(v_obj)
-
-            for wall in self.walls:
-                wall.build(self)
-
     def recalc_size(self):
         """A pálya méretének megváltozása esetén az eltolási és méretezési adatok
         újraszámolása"""
@@ -215,87 +220,18 @@ class Space(pg.sprite.Sprite):
         rate = min(x_rate, y_rate)
         self.scale = rate
 
-    def add_row(self):
-        """Új sort hozzáadása a pályához""" #TODO: ellenőrizni
-        if self.raw.shape[0] == 100:
-            return
-        cols = self.raw.shape[1]
-        self.raw = np.r_[self.raw, np.ones((1,cols), np.byte)]
-        self.size.p2 += 1
-        self.recalc_size()
-
-    def add_column(self):
-        """Új oszlop hozzáadása a pályához""" #TODO: ellenőrizni
-        rows = self.raw.shape[0]
-        self.raw = np.c_[self.raw, np.ones(rows, np.byte)]
-        self.size.p1 += 1
-        self.recalc_size()
-
-    def remove_row(self):
-        """Sor törlése a pályából"""
-        if self.raw.shape[0] == 3:
-            return
-        self.raw = self.raw[:-1]
-        self.size.p2 -= 1
-        self.recalc_size()
-
-    def remove_column(self):
-        """Oszlop törlése a pályából"""
-        if self.raw.shape[1] == 3:
-            return
-        self.raw = self.raw[:,:-1]
-        self.size.p1 -= 1
-        self.recalc_size()
-
-    def is_row_empty(self, row):
-        """Lekérdezés, hogy egy sor csak Empty objektumokat tartalmaz-e
-        
-        Attr:
-            row: int az ellenőrizni kívánt sor száma"""
-        return np.all(np.equal(self.raw[row], loader.SOKOBAN_EMPTY))
-
-    def is_column_empty(self, column):
-        """Lekérdezés, hogy egy oszlop csak Empty objektumokat tartalmaz-e
-        
-        Attr:
-            row: int az ellenőrizni kívánt oszlop száma"""
-        return np.all(np.equal(self.raw[:,column], loader.SOKOBAN_EMPTY))
-
-    """TODO: editornak külön ellenőrző osztályt kell írni
-    def check(self):
-        # Körben lennie kell egy 1 vastag üres résznek, ha nincs javítandó
-        rows = self.raw.shape[0]
-        cols = self.raw.shape[1]
-        if not self.is_row_empty(0):
-            self.raw = np.r_[np.ones((1, cols), np.byte), self.raw]
-            self.size.p2 += 1
-            rows += 1
-        if not self.is_row_empty(rows - 1):
-            self.raw = np.r_[self.raw, np.ones((1, cols), np.byte)]
-            self.size.p2 += 1
-            rows += 1
-        if not self.is_column_empty(0):
-            self.raw = np.c_[np.ones((cols, 1), np.byte), self.raw]
-            self.size.p1 += 1
-            cols += 1
-        if not self.is_column_empty(cols - 1):
-            self.raw = np.c_[self.raw, np.ones((cols, 1), np.byte)]
-            self.size.p1 += 1
-            cols += 1
-        self.recalc_size()
-    """
-
-    def draw(self, surface, pos = (0,0), down = False, grid = False):
+    def draw(self, surface: pg.Surface, pos = (0,0), down = False):
         """Pályatér kirajzolása
 
         Args:
             surface(pygame.Surface): A felület amire ki kell rajzolni a játékteret
             pos(tuple[int,int]): a pálya pozíciója a felületen
             down(bool): a pálya lentre igazítva jelenik meg
-            grid(bool): négyzetrács rajzolása a pályára
         """
         bg = pg.Surface(self.space_size)
         bg.fill(SPACE_BG_COLOR)
+        if self.background:
+            bg.blit(self.background, (0,0))
         canvas = pg.Surface(self.size * TILE_RESOLUTION, pg.SRCALPHA)
 
         if self.static_image is None:
@@ -315,13 +251,14 @@ class Space(pg.sprite.Sprite):
         # Objektumok kirajzolása
         for obj in self.boxes:
             obj.draw(canvas)
-        self.player.draw(canvas)
+        if self.player is not None:
+            self.player.draw(canvas)
 
 
-        tmp_player = Player(self.player.pos.p1, self.player.pos.p2, None)
         self.solution_objects.empty()
         rep_table = {'u': Pair(0,-1), 'r': Pair(1,0), 'd': Pair(0,1), 'l': Pair(-1,0)}
         if self.solution != "":
+            tmp_player = Player(self.player.pos.p1, self.player.pos.p2, None)
             for move_char in self.solution:
                 tmp_player.move(rep_table[move_char.lower()])
                 if move_char.isupper():
@@ -332,13 +269,6 @@ class Space(pg.sprite.Sprite):
 
         for obj in self.solution_objects:
             obj.draw(canvas)
-        
-        # Négyzetrács kirajzolása
-        if grid:
-            for y in range(self.raw.shape[0]):
-                for x in range(self.raw.shape[1]):
-                    pos = Pair(x,y) * TILE_RESOLUTION
-                    pg.draw.rect(canvas, (150,150,150), pos + TILE_RESOLUTION, 1)
 
         # Játéktér méretezése
         if self.scale != 1:

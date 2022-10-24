@@ -1,8 +1,31 @@
-"""Container osztály.
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: container.py
+Verzió: 1.0.0
+--------------------
+pygame_menu.components.container
+
+Container osztály.
 
 Container osztályok szerepelhetnek a Menu osztályokban. A container osztály
 hosonló feladatok lát el mint egy Menu osztály kibővítve, néhány extra funkcióval.
 Elemei más Component típusú objektumok.
+
+Osztályok:
+    Container
+Konstansok:
+    BACKGROUND_DEFAULT
+    BACKGROUND_COVER
+    BACKGROUND_CONTAIN
 """
 from __future__ import annotations
 
@@ -11,14 +34,18 @@ import pygame as pg
 from sokoban import config
 
 from .component import *
-from .button import Button #TODO: tesztelési céllal, kivenni
 from .scrollbar import Scrollbar
-from ..utils import VERTICAL, HORIZONTAL
+from ..utils import VERTICAL, HORIZONTAL, image_loader
+
+import utils.exceptions as ex
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ..menu import Menu
 
+BACKGROUND_DEFAULT = 0
+BACKGROUND_COVER = 1
+BACKGROUND_CONTAIN = 2
 class Container(Selectable, Scrollable, Component):
     """Container osztály.
 
@@ -28,6 +55,8 @@ class Container(Selectable, Scrollable, Component):
     
     Attributes:
         menu (Menu): objektum amiben a container van
+        background (pygame.Surface | None): háttérkép
+        background_pos (Pair): háttérkép pozíciója
         items (pygame.sprite.Group[Component]): componenseket tartalmazó Group
         selectable (list[Component]): a kiválasztható componensek
         default (bool): a Container a menu default objektuma
@@ -37,11 +66,18 @@ class Container(Selectable, Scrollable, Component):
         yscroller (Scrollbar): Vertikális scollbar
         focus(property) (bool): a componens fokuszban van-e
         select(setter) (bool): a componens ki van-e választva"""
-    def __init__(self, menu: Menu, **kwargs):
+    def __init__(self, menu: Menu, 
+        background: str = None, 
+        background_style: int = BACKGROUND_COVER, 
+        background_sticky: tuple(float, float) = STICKY_CENTER,
+        **kwargs):
         """belépési pont
         
         Args:
             menu (Menu): a contaninert befoglaló Menu objektum
+            background (str): háttérkép neve
+            background_style (int): háttérkép megjelenítésének módja(eredeti, befoglaló keret méretéhet)
+            background_sticky (tuple(float, float)): háttérkép igazítása
         
         Kwargs:
             -> Component.__init__(...)"""
@@ -52,6 +88,32 @@ class Container(Selectable, Scrollable, Component):
 
         self.menu = menu
         self.menu.add(self)
+
+        self.background = None
+        if background is not None:
+            self.background = image_loader(background)
+
+        if self.background is not None and background_style != BACKGROUND_DEFAULT:
+            img_size = Pair(self.background.get_size())
+            scale_point = img_size / self.size
+            if background_style == BACKGROUND_COVER:
+                if scale_point.p1 > scale_point.p2:
+                    scale = scale_point.p2
+                else:
+                    scale = scale_point.p1
+            elif background_style == BACKGROUND_CONTAIN:
+                if scale_point.p1 > scale_point.p2:
+                    scale = scale_point.p1
+                else:
+                    scale = scale_point.p2
+            else:
+                scale = Pair(0, 0)
+
+            self.background = pg.transform.scale(self.background, img_size / scale)
+
+        
+        if self.background is not None:
+            self.background_pos = (self.size - Pair(self.background.get_size())) * background_sticky
 
         self.items = pg.sprite.Group()
         self.selectables = []
@@ -127,7 +189,7 @@ class Container(Selectable, Scrollable, Component):
     def selected(self, value: Component | None):
         """setter"""
         assert isinstance(value, Component) or value is None, (f"Várt "
-            f"pygame_menu.components.Component vagy None típus, kapott {type(value)}")
+            f"pygame_menu.components.Component vagy None típus, kapott {type(value)}") # TODO: ezt át kell írni kivételre
         if self._selected is not None:
             self._selected.select = False
         self._selected = value
@@ -151,9 +213,11 @@ class Container(Selectable, Scrollable, Component):
     def add(self, item):
         """component hozzáadása
         
-        Belső használatra."""
-        assert isinstance(item, Component), (f"Várt pygame_menu.components.Container "
-            f"típus, kapott {type(item)}")
+        Belső használatra.
+        
+        Raises:
+            ValueError: ha nem a Component osztály leszármazottja"""
+        ex.arg_instance_exception('item', item, Component)
         
         self.items.add(item)
         if isinstance(item, Selectable):
@@ -164,9 +228,11 @@ class Container(Selectable, Scrollable, Component):
     def remove(self, item):
         """component eltávolítása
         
-        Belső használatra."""
-        assert isinstance(item, Component), (f"Várt pygame_menu.components.Container "
-            f"típus, kapott {type(item)}")
+        Belső használatra.
+
+        Raises:
+            ValueError: ha nem a Component osztály leszármazottja"""
+        ex.arg_instance_exception('item', item, Component)
         
         if self.items.has(item):
             self.items.remove(item)
@@ -221,6 +287,9 @@ class Container(Selectable, Scrollable, Component):
             self.image.fill(self.color['focus'])
         else:
             self.image.fill(self.color['bg'])
+
+        if self.background is not None:
+            self.image.blit(self.background, self.background_pos)
 
         [item.draw(self.image) for item in self.items]
 
@@ -460,6 +529,13 @@ class Container(Selectable, Scrollable, Component):
 
                 if next is not None:
                     self.selected = next
+
+                    if self.xscroller.show:
+                        self.scroll = {'x':self.selected.position[0]}
+                        self.xscroller.updated()
+                    if self.yscroller.show:
+                        self.scroll = {'y':self.selected.position[1]}
+                        self.yscroller.updated()
 
     def e_KeyUp(self, **kwargs):
         """billentyűzet gombfelengedésének lekezelése

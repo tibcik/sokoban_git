@@ -1,4 +1,22 @@
-"""Sokoban pályakészletek betöltése, módosítása, mentése
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: loader.py
+Verzió: 1.0.0
+--------------------
+sokoban.data.loader
+
+Pályakészletbetöltő és módosító metódusokat tartalmazó csomag
+
+Sokoban pályakészletek betöltése, módosítása, mentése
 
 A sokoban pályakészletek json objektumként vannak tárolva melynek felépítése:
 {
@@ -21,7 +39,31 @@ A sokoban pályakészletek json objektumként vannak tárolva melynek felépít�
 			}...
         ]
     }
-}"""
+}
+
+Metódusok:
+    sligify
+    __jload_set
+    jget_info
+    __jget_data
+    jget_data
+    jget_levels
+    jget_sets
+    __jsave_set
+    jset_info
+    jset_data
+
+Konstansok:
+    SOKOBAN_EMPTY
+    SOKOBAN_FLOOR
+    SOKOBAN_WALL
+    SOKOBAN_GOAL
+    SOKOBAN_BOX
+    SOKOBAN_PLAYER
+    SPACE_TYPES
+    SETS_DIR
+    DEFAULT_SET
+"""
 from __future__ import annotations
 
 import os
@@ -59,7 +101,7 @@ SPACE_TYPES = {
                 }
 
 SETS_DIR = config.SETS_PATH
-DEFAULT_SET = 'default'
+DEFAULT_SET = config.DEFAULT_SET
 
 # Modul változó az éppen használt set tárolására
 _selected_set = ''
@@ -261,7 +303,7 @@ def jset_info(level: int | None, name: str = '', dificulty: int = 1, description
         info = data['set']['levels'][level]['info']
 
     info['name'] = name if name else info['name']
-    info['dificulty'] = dificulty if dificulty else info['dificulty']
+    info['dificulty'] = int(dificulty) if dificulty else info['dificulty']
     info['description'] = description if description else info['description']
 
     __jsave_set(set_name, data)

@@ -1,4 +1,20 @@
-"""Játékhoz kapcsolódó kiegészítő elemek
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: __init__.py
+Verzió: 1.0.0
+--------------------
+sokoban.utils
+
+Játékhoz kapcsolódó kiegészítő elemek
 
 A Sokoban játékhoz kapcsolódó kiegészítő eszközök amiknek egy része tesztelési
 célt szolgál.

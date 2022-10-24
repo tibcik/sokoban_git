@@ -1,4 +1,27 @@
-"""Előre megírt assertek"""
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: asserts.py
+Verzió: 1.0.0
+--------------------
+utils.asserts
+
+Előre megírt assertek
+
+TODO: minden előfordulási helyen kicserélni az exception csomagban található megfelelő metódussal
+
+Metódusok:
+    type_assert
+    list_len_assert
+"""
 from __future__ import annotations
 
 def type_assert(v_name: str, v: any, t: any):

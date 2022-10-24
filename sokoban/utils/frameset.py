@@ -1,5 +1,22 @@
-"""Sprite képek betöltése és kezelése
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
 
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: frameset.py
+Verzió: 1.0.0
+--------------------
+sokoban.utils.frameset
+
+Sprite képek betöltése és kezelése
+
+TODO: Ez már megváltozott, frissíteni az aktuális felépítésre
 A skint és json fájl tartalmazza, ennek felépítése:
 {
     "framesets": {
@@ -23,9 +40,15 @@ A skint és json fájl tartalmazza, ennek felépítése:
     frame_pos (list[list[int,int]]): a képen lévő pozíció ahova a frame-et be kell illeszteni az egyes képfájlok szerint
     frames (list[int]): az egyes képfájlokban lévő képkockák száma
     way (list[str]): up|down|left|rigt a képkockák olvasási iránya
-    loop (list[bool]): az adott képben lévő képkockák ismétlése ha szükséges"""
+    loop (list[bool]): az adott képben lévő képkockák ismétlése ha szükséges
+    
+Objektumok:
+    Frameset
+"""
 import pygame as pg
 import json
+
+import time
 
 from sokoban import config
 
@@ -51,7 +74,7 @@ class Framesets:
 
         with open(f"{config.SKIN_PATH}{config.skin_name}/skin.json") as f: # Hibakezelés
             data = json.load(f)
-            self.data = data["framesets"]
+            self.data = data["images"]
 
         self.load_images()        
         self.load_frameset()
@@ -61,77 +84,84 @@ class Framesets:
         """Képek betöltése
         """
         for frameset in self.data:
-            if 'images' not in self.data[frameset]:
+            if 'sprite' not in self.data[frameset]:
                 continue
-            for img_path in self.data[frameset]['images']:
-                if img_path not in self.images:
-                    self.images[img_path] = pg.image.load(f"{config.SKIN_PATH}{config.skin_name}/{img_path}").convert_alpha()
+            img_path = self.data[frameset]['sprite']
+            if img_path not in self.images:
+                self.images[img_path] = pg.image.load(f"{config.SKIN_PATH}{config.skin_name}/{img_path}").convert_alpha()
 
     def load_frameset(self):
         """Képkockák betöltése
         """
         for frameset in self.data:
-            if 'copy' in self.data[frameset]:
-                if self.data[frameset]['copy'] in self.data:
-                    self.copy_frameset(self.data[self.data[frameset]['copy']], self.data[frameset])
-                else:
-                    continue
-
             self.load_frames(frameset)
             self.frame[frameset] = -1
 
-    def copy_frameset(self, from_fs: dict, to_fs: dict):
-        """Képkocka másolása
-
-        Args:
-            from_fs (dict): ahonnan másoljuk
-            to_fs (dict): ahova másoljuk
-        """
-        for data in from_fs:
-            if data not in to_fs:
-                to_fs[data] = from_fs[data]
-
-    def load_frames(self, frameset_name: str):
+    def load_frames(self, frameset_name: str, data: None | dict = None):
         """Képkockák betöltése
 
         Args:
             frameset_name (str): képkocka neve
         """
-        frameset = self.data[frameset_name]
-        self.frames[frameset_name] = []
-        for frame_i in range(0, max(frameset['frames'])):
+        if data is not None:
+            frameset = data
+        else:
+            frameset = self.data[frameset_name]
+
+        if 'frames' not in frameset:
+            frameset['frames'] = 1
+        if 'times' not in frameset:
+            frameset['times'] = 1
+        loop = False if 'loop' not in frameset else frameset['loop']
+        next_frameset = None if 'next' not in frameset else frameset['next']
+        self.frames[frameset_name] = {'images': [], 'frame': 0, 'loop': loop, 'times': [], 'last_time': -1, 'next': next_frameset}
+        for frame_num in range(0, frameset['frames']):
             w, h = frameset['size']
             sprite = pg.Surface((w, h), pg.SRCALPHA)
             #sprite.set_colorkey((0,0,0))
 
-            for image_i in range(0, len(frameset['images'])):
-                frames = frameset['frames'][image_i]
-                offset_m = frame_i % frames if frames > frame_i or frameset['loop'][image_i] else frames - 1
+            x = frameset['frame_start_pos'][0] + frameset['size'][0] * frame_num
+            y = frameset['frame_start_pos'][1]
 
-                way = frameset['way'][image_i]
+            sprite.blit(self.images[frameset['sprite']], (0, 0), (x, y, frameset['size'][0], frameset['size'][1]), pg.BLEND_ALPHA_SDL2)
 
-                if way == 'left':
-                    offset_m_xy = (offset_m * -1, 0)
-                elif way == 'right':
-                    offset_m_xy = (offset_m, 0)
-                elif way == 'up':
-                    offset_m_xy = (0, offset_m * -1)
-                else:
-                    offset_m_xy = (0, offset_m)
-                
-                x = frameset['start_pos'][image_i][0] + frameset['frame_size'][image_i][0] * offset_m_xy[0]
-                y = frameset['start_pos'][image_i][1] + frameset['frame_size'][image_i][1] * offset_m_xy[1]
-                image_offset = (frameset['frame_pos'][image_i][0], frameset['frame_pos'][image_i][1])
-
-                sprite.blit(self.images[frameset['images'][image_i]], image_offset, (x, y, frameset['frame_size'][image_i][0], frameset['frame_size'][image_i][0]), pg.BLEND_ALPHA_SDL2)
-            
             if self.size != (0, 0):
                 sprite = pg.transform.scale(sprite, self.size)
             if 'rotate' in frameset:
                 sprite = pg.transform.rotate(sprite, frameset['rotate'])
-            self.frames[frameset_name].append(sprite)
+            if 'y_mirror' in frameset:
+                sprite = pg.transform.flip(sprite, False, True)
+            if 'x_mirror' in frameset:
+                sprite = pg.transform.flip(sprite, True, False)
+            
+            self.frames[frameset_name]['images'].append(sprite)
+            if type(frameset['times']) == list:
+                if frame_num >= len(frameset['times']):
+                    self.frames[frameset_name]['times'].append(frameset['times'][-1])
+                else:
+                    self.frames[frameset_name]['times'].append(frameset['times'][frame_num])
+            else:
+                self.frames[frameset_name]['times'].append(frameset['times'])
 
-    def get_next_frame(self, frameset_name: str) -> pg.Surface:
+
+        if 'like' in frameset:
+            for similar_frameset in frameset['like']:
+                self.copy_data(frameset, frameset['like'][similar_frameset])
+                self.load_frames(similar_frameset, frameset['like'][similar_frameset])
+
+    def copy_data(self, from_data: any, to_data: any):
+        """copy_data Adatok átmásoláso egyik objektumból a másikba, a létezőket megtartva
+
+        Args:
+            from_data (any): másolandó objektum
+            to_data (any): objektum amibe az adatokat másoljuk
+        """
+        for data in from_data:
+            if data not in to_data:
+                if data != 'like':
+                    to_data[data] = from_data[data]
+
+    def get_frame(self, frameset_name: str, reset = False, fast = False) -> pg.Surface:
         """Bizonyos nevű képkockákból a következő
 
         Args:
@@ -140,27 +170,54 @@ class Framesets:
         Returns:
             pygame.Surface: a következő képkocka
         """
-        if (self.frame[frameset_name] + 1) >= len(self.frames[frameset_name]):
-            self.frame[frameset_name] = 0
+        data = self.frames[frameset_name]
+
+        if len(data['images']) == 1:
+            return (frameset_name, data['images'][0])
+
+        if data['last_time'] == -1 or reset:
+            return self.reset_frame(frameset_name)
+
+        frame = data['frame']
+
+        now = time.time()
+        if frame == len(data['times']):
+            if data['next']:
+                if now - data['last_time'] > (data['times'][frame - 1] / (10 if fast else 1)):
+                    data['last_time'] = -1
+                    #self.frames[data['next']]['last_time'] = now
+                    return self.reset_frame(data['next']) # (data['next'], self.frames[data['next']]['images'][0], 0)
+                else:
+                    return (frameset_name, None)
+            elif data['loop']:
+                if now - data['last_time'] > (data['times'][frame - 1] / (10 if fast else 1)):
+                    self.reset_frame(frameset_name)
+                    data['frame'] += 1
+                    return (frameset_name, data['images'][0])
+                else:
+                    return (frameset_name, None)
+            else:
+                return (frameset_name, False)
+        elif now - data['last_time'] > (data['times'][frame - 1]  / (10 if fast else 1)):
+            data['frame'] += 1
+            data['last_time'] = now
+            return (frameset_name, data['images'][frame])
         else:
-            self.frame[frameset_name] += 1
+            return (frameset_name, None)
 
-        return self.frames[frameset_name][self.frame[frameset_name]]
-
-    def get_frame(self, frameset_name: str, i: int) -> pg.Surface:
-        """Bizonyos nevű képkockából egy adott számú
+    def reset_frame(self, frameset_name: str) -> pg.Surface:
+        """reset_frame Számláló és idő alaphelyzetbe állítása
 
         Args:
-            frameset_name (str): képkocka neve
-            i (int): képkocka száma
+            frameset_name (str): az objektum neve
 
         Returns:
-            pygame.Surface: adott számú képkocka
+            pg.Surface: első képkocka
         """
-        if i < 0 or i >= len(self.frames[frameset_name]):
-            return None
-        self.frame[frameset_name] = i
-        return self.frames[frameset_name][i]
+        self.frames[frameset_name]['last_time'] = time.time()
+        self.frames[frameset_name]['frame'] = 1
+
+        return (frameset_name, self.frames[frameset_name]['images'][0])
 
     def get_frame_count(self, frameset_name: str) -> int:
         """Bizonyos nevű képkockákból azok száma
@@ -171,7 +228,7 @@ class Framesets:
         Returns:
             int: képkockák száma
         """
-        return len(self.frames[frameset_name])
+        return len(self.frames[frameset_name]['images'])
 
     def is_a_frame(self, frameset_name: str) -> bool:
         """Bizonyos nevű képkockák ellenőrzése
@@ -183,6 +240,3 @@ class Framesets:
             bool: képkocka létetik-e
         """
         return frameset_name in self.frames
-
-    def get_frame_time(sefl):
-        pass

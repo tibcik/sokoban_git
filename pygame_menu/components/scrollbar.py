@@ -1,4 +1,23 @@
-"""Scrollbar osztály modulja
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: scrollbar.py
+Verzió: 1.0.0
+--------------------
+pygame_menu.components.scrollbar
+
+Görgetősáv menüelem.
+
+Osztályok:
+    Scrollbar
 """
 from __future__ import annotations
 

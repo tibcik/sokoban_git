@@ -1,6 +1,24 @@
-"""Játékhoz szükséges MovePool osztály modulja"""
-import log.log
-logger = log.log.init("MovePool")
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: movepool.py
+Verzió: 1.0.0
+--------------------
+sokoban.movepool
+
+Játékhoz szükséges MovePool osztály csomagja
+
+Osztályok:
+    MovePool
+"""
 
 from .objects import Box, Player
 from utils import Pair

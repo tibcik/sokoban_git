@@ -2,13 +2,19 @@ import sys
 import pygame as pg
 
 import pygame_menu.menus as menus
+from pygame_menu.menus.editor_menu import EditorMenu
 from pygame_menu.menus.game_menu import GameMenu
+from sokoban.editor import Editor
 from sokoban.utils import FpsDisplay
 from sokoban import Game
 
 class MainController:
     def __init__(self, args):
         pg.init()
+
+        pg.display.set_caption('Sokoban')
+        icon = pg.image.load('./icon.png')
+        pg.display.set_icon(icon)
 
         self.clock = pg.time.Clock()
         self.screen = pg.display.set_mode([1024,800])
@@ -57,7 +63,7 @@ class MainController:
         for c in self.controllers:
             c.draw(self.screen)
 
-        self.fps_module.draw(self.screen)
+        # self.fps_module.draw(self.screen)
 
     def event(self, e):
         if e.type == pg.QUIT:
@@ -79,6 +85,12 @@ class MainController:
 
         return menu
 
+    def init_settings_menu(self):
+        menu = menus.SettingsMenu(self, self.screen)
+        self.change_controller(menu)
+
+        return menu
+
     def init_game(self, set_name, level):
         game = Game(self, self.screen, set_name, level)
         self.change_controller(game)
@@ -89,6 +101,25 @@ class MainController:
 
     def continue_game(self, game, menu):
         self.remove_controller(game, menu)
+
+    def init_editor(self, set_name, level):
+        editor = Editor(self, self.screen, set_name, level)
+        self.change_controller(editor)
+
+    def init_editor_menu(self, editor):
+        menu = EditorMenu(self, self.screen, editor)
+        self.add_controller(menu)
+
+    def resume_editor(self, editor, menu):
+        self.remove_controller(editor, menu)
+
+    def exit_editor(self, set_name, level):
+        menu = menus.EditorMainMenu(self, self.screen)
+        menu.selected_set = set_name
+        menu.selected_level = level
+        menu.init_level_info(None)
+
+        self.change_controller(menu)
 
     # END
 
@@ -106,6 +137,10 @@ class MainController:
         self.active_controller = controller
 
     def exit(self, _):
+        for c in self.controllers:
+            if isinstance(c, Game):
+                if c.solver != None and c.solver.is_alive():
+                    c.solver.join()
         self.running = False
 
 if __name__ == '__main__':

@@ -1,5 +1,25 @@
-"""Főmenü
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: player_menu.py
+Verzió: 1.0.0
+--------------------
+pygame_menu.menus.player_menu
+
+Játékos(profil) menü
+
+Osztályok:
+    PlayerMenu
 """
+
 from __future__ import annotations
 
 import pygame as pg
@@ -48,7 +68,7 @@ class PlayerMenu(Menu):
         """Játékos menü betöltése
         """
         self.clear()
-        self.main_container = Container(self, size=self.screen.get_size())
+        self.main_container = Container(self, "profile_back.png", size=self.screen.get_size())
 
         player_name = saves.get_player(self.selected_player_id)
 
@@ -79,7 +99,7 @@ class PlayerMenu(Menu):
         """Pályaválasztó betöltése
         """
         set_name = saves.get_current_set(self.selected_player_id)
-        LevelSelectorContainer(self, self.select_level, set_name, self.selected_player_id, size=self.screen.get_size())
+        LevelSelectorContainer(self, self.select_level, set_name, True, self.selected_player_id, background="set_back.png", size=self.screen.get_size())
 
     def select_level(self, level: int):
         """Pálya kiválasztásakor lefutó metódus
@@ -92,7 +112,7 @@ class PlayerMenu(Menu):
     def init_select_set(self, _):
         """Pályakészletválasztó betöltése
         """
-        SetSelectorContainer(self, self.select_set, size=self.screen.get_size())
+        SetSelectorContainer(self, self.select_set, background="set_back.png", size=self.screen.get_size())
         
     def select_set(self, set_name: str):
         """Pályakészlet kiválasztásakor lefutó metódus

@@ -1,6 +1,23 @@
-"""Button osztály.
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: button.py
+Verzió: 1.0.0
+--------------------
+pygame_menu.components.button
 
 Nyomógombként, vagy választható menüelemként felhasználható componens.
+
+Osztályok:
+    Button
 """
 from __future__ import annotations
 
@@ -11,19 +28,19 @@ from utils import Pair
 
 from .component import *
 
+import utils.exceptions as ex
+
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from typing import Callable
 
 class Button(MouseGrabber, Selectable, Component):
-    """Nyomógomb
-
-    Container osztályban felhasználható nyomógomb vagy választható menüelem.
+    """Container osztályban felhasználható nyomógomb vagy választható menüelem.
 
     Attributes:
         action (callable): a gomb kiválasztására lefutó metódus
-        text(property) (str): a gombon megjelenő szöveg
-        font(property) (pygame.font.Font): a gomb betűtipusa
+        text (property) (str): a gombon megjelenő szöveg
+        font (property) (pygame.font.Font): a gomb betűtipusa
     """
     def __init__(self, container: Container, text: str, action: Callable, selected: bool = False,
         font_size: int = config.DEFAULT_FONT_SIZE, **kwargs):
@@ -63,8 +80,12 @@ class Button(MouseGrabber, Selectable, Component):
 
     @text.setter
     def text(self, value: str):
-        """setter"""
-        assert type(value) == str, (f"Várt str típus, kapott {type(value)}")
+        """setter
+
+        Raises:
+            ValueError: Ha nem str típusú"""
+        ex.arg_type_exception('value', value, str)
+
         self._text = value
         # Ha a régi méret egyenlő a kép méretével akkor nincs előre beállított
         # méret. Az új méret a kép mérete lesz.
@@ -82,9 +103,11 @@ class Button(MouseGrabber, Selectable, Component):
 
     @font.setter
     def font(self, value: pg.font.Font):
-        """setter"""
-        #assert type(value) == pg.font.Font, (f"Várt pygame.font.Font típus, "
-        #    f"kapott {type(value)}") #TODO ez nem működik
+        """setter
+        
+        Raises:
+            ValueError: Ha nem pygame.font.Font osztály leszármazottja"""
+        ex.arg_instance_exception('value', value, pg.font.Font)
         
         self._font = value
         self.text = self._text

@@ -1,4 +1,20 @@
-"""Egy osztályos modul ami a Pair osztályt tartalmazza
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: pair.py
+Verzió: 1.0.0
+--------------------
+utils.pair
+
+Egy osztályos modul ami a Pair osztályt tartalmazza
 
 A Pair osztály egy számpárt tartalmazó osztály,
 használatával lehetőség van számpárokon végzett matematikai
@@ -10,6 +26,9 @@ műveletek végrehajtására.
     b = Pair((2,6))
     c = Pair([7,6,8,1])
     d = a + b / c - 6
+
+Osztályok:
+    Pair
 """
 from __future__ import annotations
 

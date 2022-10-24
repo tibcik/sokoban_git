@@ -1,4 +1,23 @@
-"""Select osztály modulja
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: select.py
+Verzió: 1.0.0
+--------------------
+pygame_menu.components.select
+
+Elemválasztó menüelem
+
+Osztályok:
+    Select
 """
 from __future__ import annotations
 
@@ -8,6 +27,8 @@ from sokoban import config
 
 from .component import *
 from utils import Pair, betweens
+
+import utils.exceptions as ex
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -52,6 +73,7 @@ class Select(KeyboardGrabber, Scrollable, MouseGrabber, Selectable, Component):
         self.color['font'] = config.SELECT_FONT_COLOR
 
         # Az előre kiválasztott elem megjelenítése
+        self.update_image()
         self.scroll = {'x': self.size[0] * self.selected}
 
     @property
@@ -61,12 +83,14 @@ class Select(KeyboardGrabber, Scrollable, MouseGrabber, Selectable, Component):
 
     @items.setter
     def items(self, value: tuple(str)):
-        """setter"""
-        assert hasattr(value, "__getitem__"), (f"Várt lista szerű típus, "
-            f"kapott {type(value)}")
+        """setter
+        
+        Raises:
+            ValueError: Ha nem listaszerű"""
+        ex.arg_attribute_exception('value', value, '__getitem__')
         
         # Az üres strigek kihagyása
-        self._items = [item for item in value if len(item) > 0]
+        self._items = [str(item) for item in value if len(str(item)) > 0]
         # Ha a régi méret egyenlő a kép méretével akkor nincs előre beállított
         # méret. Az új méret a kép mérete lesz.
         if self.size == (0, 0) or self.size == Pair(self.image.get_size()):
@@ -89,9 +113,11 @@ class Select(KeyboardGrabber, Scrollable, MouseGrabber, Selectable, Component):
 
     @font.setter
     def font(self, value: pg.font.Font):
-        """setter"""
-        assert type(value) == pg.font.Font, (f"Várt pygame.font.Font típus, "
-            f"kapott {type(value)}")
+        """setter
+        
+        Raises:
+            ValueError: Ha nem pygame.font.Font osztály leszármazottja"""
+        ex.arg_instance_exception('value', value, pg.font.Font)
         
         self._font = value
         self.items = self._items

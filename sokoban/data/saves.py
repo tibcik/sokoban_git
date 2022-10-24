@@ -1,4 +1,20 @@
-"""Mentések kezelése
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: saves.py
+Verzió: 1.0.0
+--------------------
+sokoban.data.saves
+
+Mentések kezelése
 
 A mentések egy json fájlban tároljuk melynek felépítése:
 {
@@ -23,6 +39,25 @@ A mentések egy json fájlban tároljuk melynek felépítése:
         'sound_volume': (int[0...10])
     }
 }
+
+Metódusok:
+    get_players
+    get_last_player_id
+    get_player
+    get_current_set
+    get_current_level
+    get_setup
+    get_level_statistic
+    get_set_statistic
+    get_statistic
+    save
+    set_last_player
+    remove_player
+    add_player
+    set_current_set
+    set_current_level
+    set_setup
+    done_level
 """
 from __future__ import annotations
 
@@ -117,9 +152,9 @@ def get_setup() -> dict | None:
             ha nem létezik akkor None
     """
     if 'setup' not in saves:
-        return None
+        return {'skin': config.skin_name, 'res': (640,640), 'music_volume': 0, 'sound_volume': 0}
 
-    return copy(save['setup'])
+    return copy(saves['setup'])
 
 def get_level_statistic(set_name: str, level: int, id: int | None = None) -> dict | None:
     """Pálya statisztikák

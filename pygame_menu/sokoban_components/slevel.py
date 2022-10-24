@@ -1,4 +1,20 @@
-"""Szint választó osztály modulja
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: slevel.py
+Verzió: 1.0.0
+--------------------
+pygame_menu.sokoban_componenets.slevel
+
+Szint választó osztály modulja
 
 Nem tisztán menüelem, mivel a működéséhez szükséges a sokoban játék néhány osztálya.
 """
@@ -31,7 +47,7 @@ class SLevel(MouseGrabber, Selectable, Component):
         space_image (pygame.Surface): a pálya képe
         font(property) (pygame.font.Font): betűtipus"""
     def __init__(self, container: Container, action: Callable, set_name: str,
-        level: int, **kwargs):
+        level: int, show_info: bool = True, **kwargs):
         """SLevel
 
         Args:
@@ -55,7 +71,9 @@ class SLevel(MouseGrabber, Selectable, Component):
         assert self.level_info is not None, (f"Hibás set_nam vagy level: "
             f"{set_name}, {level}.")
 
-        self.stats = saves.get_level_statistic(self.set_name, self.level)
+        self.stats = None
+        if show_info:
+            self.stats = saves.get_level_statistic(self.set_name, self.level)
 
         self.size = (228, 400) #TODO padding, margin
 

@@ -1,5 +1,25 @@
-"""Főmenü
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: main_menu.py
+Verzió: 1.0.0
+--------------------
+pygame_menu.menus.main_menu
+
+Játék főmenü
+
+Osztályok:
+    MainMenu
 """
+
 from __future__ import annotations
 
 import pygame as pg
@@ -45,7 +65,7 @@ class MainMenu(Menu):
         """Főmenü betöltése
         """
         self.clear()
-        self.main_container = Container(self, size=self.screen.get_size())
+        self.main_container = Container(self, "main_back.png", size=self.screen.get_size())
 
         b = None
         y_offset = 0
@@ -64,7 +84,7 @@ class MainMenu(Menu):
         """Játékosslot menü betöltése
         """
         self.clear()
-        self.main_container = Container(self, size = self.screen.get_size())
+        self.main_container = Container(self, "profiles_back.png", size = self.screen.get_size())
 
         Label(self.main_container, "Játékos választás", position=(1/8,1/2-150))
 
@@ -108,9 +128,10 @@ class MainMenu(Menu):
         self.selected_button.text = name
 
     def init_settings_menu(self, _):
-        """NotImplemented
+        """init_settings_menu Beállítások menü betöltése
         """
-        print("NotImplemented!")
+        
+        self.controller.init_settings_menu()
 
     def continue_game(self, _):
         """Előző játék folytatása

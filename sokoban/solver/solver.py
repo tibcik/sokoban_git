@@ -1,19 +1,65 @@
-from copy import copy
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: solver.py
+Verzió: 1.0.0
+--------------------
+sokoban.solver.solver
+
+Sokoban megoldó kiegészítő metódusok
+
+Metódusok:
+    initialize
+    getState
+    getSolvedState
+    getSolutionFromExist
+    getPlayerPos
+    setValidSpace
+    validate
+    setFloors
+"""
+from __future__ import annotations
+
+from math import floor
 from queue import PriorityQueue
+
+from utils import between
+from sokoban.data import loader
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from sokoban import Space
 
 validSpaces = set()
 walls = None
 goals = None
 moves = None
+max_obj = 0
 
-def initialize(layout):
-    global walls, goals, moves
+def initialize(layout: str, editor: bool = False):
+    """initialize Csomag betöltése
+
+    Args:
+        layout (str): Játéktér karakterlánc reprezentációja
+        editor (bool, optional): Az inicializálást az Editor osztály kérte. Defaults to False.
+    """
+    global walls, goals, moves, max_obj
 
     _goals = set()
     _walls = set()
 
     height = len(layout)
     width = max([len(x) for x in layout])
+
+    max_obj = height * width
 
     for y in range(height):
         for x in range(width):
@@ -31,9 +77,21 @@ def initialize(layout):
     
     moves = (-1,height,1,-height) # up, right, down, left
 
-    setValidSpaces()
+    if not editor:
+        setValidSpaces()
 
-def getState(layout, get_initialize = False):
+def getState(layout: str, get_initialize: bool = False, validate: bool = False) -> tuple:
+    """getState Aktuális állás lekérése
+
+    Args:
+        layout (str): Játéktér karakterlánc reprezentációja
+        get_initialize (bool, optional): A csomag újratöltésének jelzése. Defaults to False.
+        validate (bool, optional): A betöltött állás ellenőrzése. Defaults to False.
+
+    Returns:
+        tuple: Az állást reprezentáló tuple objektum
+            (Játékos, (Doboz,Doboz,...))
+    """
     global walls, goals, moves
 
     if goals is None or get_initialize:
@@ -53,23 +111,41 @@ def getState(layout, get_initialize = False):
                 elif layout[y][x] == '$': _boxes.add(x*height+y)     # box
                 elif layout[y][x] == '*':                           # box on goal
                     box = x*height+y
-                    if box not in validSpaces:
+                    if not validate and box not in validSpaces:
                         return None
                     _boxes.add(box)
                 elif layout[y][x] == '+':                           # player on goal
+                    if validate and _player != 0:
+                        return 'MorePlayer'
                     _player = x*height+y
+
+    if validate:
+        if len(goals) != len(_boxes):
+            return "NotEqualBoxGoal"
+        if _player == 0:
+            return "NoPlayer"
 
     return (_player, tuple(sorted(_boxes)))
 
-def getSolvedStates(player, boxes: tuple, solution: list[str]):
+def getSolvedStates(player: int, boxes: tuple, solution: str) -> tuple:
+    """getSolvedStates Egy megoldásból a lehetséges állások felderítése
+
+    Args:
+        player (int): játékos pozíciója
+        boxes (tuple): dobozok pozícióji
+        solution (str): megoldás karakterlánca
+
+    Returns:
+        tuple: lehetséges állások a megoldáshoz
+    """
     global moves, walls
 
     boxes = list(boxes)
 
     states = []
 
-    if solution[0].islower():
-        states.append((player, getPlayerPos(player, boxes), tuple(boxes), solution))
+    #if solution[0].islower():
+    states.append((player, getPlayerPos(player, boxes), tuple(boxes), solution))
 
     step = 0
 
@@ -93,7 +169,17 @@ def getSolvedStates(player, boxes: tuple, solution: list[str]):
 
     return tuple(states)
 
-def getSolutionFromExist(player, boxes, solution_state):
+def getSolutionFromExist(player: int, boxes: tuple, solution_state: tuple) -> str:
+    """getSolutionFromExist Megtalált mefoldás lekérdezése
+
+    Args:
+        player (int): játékos pozíciója
+        boxes (tuple): dobozok pozíciói
+        solution_state (tuple): keresett állás
+
+    Returns:
+        str: megoldás
+    """
     global moves, walls
 
     #if solution_state[3][0].isupper() and player == solution_state[0]:
@@ -150,7 +236,16 @@ def getSolutionFromExist(player, boxes, solution_state):
 
     return pre_moves + solution_state[3][step:]
 
-def getPlayerPos(player, boxes):
+def getPlayerPos(player: int, boxes: tuple) -> tuple:
+    """getPlayerPos A játékos által elérhető pozíciók lekérdezése
+
+    Args:
+        player (int): játékos pozíciója
+        boxes (tuple): dobozok pozíciói
+
+    Returns:
+        tuple: elérhető pozíciók
+    """
     global moves, walls
 
     playerSpace = set()
@@ -167,6 +262,8 @@ def getPlayerPos(player, boxes):
     return tuple(sorted(playerSpace))
 
 def setValidSpaces():
+    """setValidSpaces Nem static deadlock pozíciók beállítása
+    """
     global validSpaces, goals, walls, moves
 
     validSpaces = set()
@@ -189,3 +286,73 @@ def setValidSpaces():
             actions.extend([(action[0]+move, action[0]+move+move) for move in moves])
 
         validSpaces.update(visited)
+
+def validate(player: int, boxes: tuple) -> str | bool:
+    """validate Állás ellenőrzése
+
+    Args:
+        player (int): játékos pozíciója
+        boxes (tuple): dobozok pozíciói
+
+    Returns:
+        str | bool: megoldható-e, vagy a megoldás akadálya
+    """
+    global goals, walls, moves, max_obj
+
+    visited = set()
+    visited.add(player)
+    visited_box = 0
+    visited_goal = 0
+    actions = [player+move for move in moves]
+    while actions:
+        pos = actions.pop()
+
+        if not between(pos, 0, max_obj):
+            return 'NotClosed'
+
+        if pos in visited or pos in walls:
+            continue
+        if pos in boxes:
+            visited_box += 1
+        if pos in goals:
+            visited_goal += 1
+
+        visited.add(pos)
+        actions.extend([pos+move for move in moves])
+
+    if visited_box != len(boxes) or visited_goal != len(goals):
+        return 'NotReachableBoxGoal'
+
+    return True
+
+def setFloors(space: Space, player: int):
+    """setFloors Padlók beállítása, az elérhető helyek alapján
+
+    Args:
+        space (Space): Játéktér objektum
+        player (int): Játékos pozíciója
+    """
+    global walls, moves
+
+    visited = set()
+    actions = [player+move for move in moves]
+
+    for x in range(space.size[0] - 1):
+        for y in range(space.size[1] - 1):
+            if space[x,y] == loader.SOKOBAN_FLOOR:
+                space[x,y] = loader.SOKOBAN_EMPTY
+
+    while actions:
+        pos = actions.pop()
+
+        if pos in visited or pos in walls:
+            continue
+
+        x = floor(pos / (space.size[1] + 1))
+        y = pos % (space.size[1] + 1)
+
+        if space[x,y] & loader.SOKOBAN_EMPTY:
+            space[x,y] = loader.SOKOBAN_FLOOR
+
+        visited.add(pos)
+        actions.extend([pos+move for move in moves])

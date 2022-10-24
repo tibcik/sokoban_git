@@ -1,20 +1,44 @@
-"""Különböző előre definiált Containerek.
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: __init__.py
+Verzió: 1.0.0
+--------------------
+pygame_menu.menus.containers
+
+Különböző előre definiált Containerek.
 
 Pl.: TextEntryContainer: szövegbekérő mezővel ellátott container
 SelectContainer: Igen/Nem választó kontainer
+
+Osztályok:
+    ExtendedContainer
+    TextEntryContainer
+    SelectContainer
+    LevelSelectorContainer
+    SetSelectorContainer
 """
 from __future__ import annotations
 
 import pygame as pg
 from math import ceil, floor
 
-from sokoban import config
 from sokoban.data import loader, saves
 from utils.asserts import *
 
 from ...components import Container, Label, TextEntry, Button
 from ...components.component import STICKY_CENTER, STICKY_LEFT, STICKY_RIGHT, STICKY_UP
 from ...sokoban_components import SLevel, SSet
+
+import utils.exceptions as ex
 
 from typing import TYPE_CHECKING, Callable
 if TYPE_CHECKING:
@@ -27,7 +51,12 @@ class ExtendedContainer:
 
         Args:
             clear (bool, optional): meglévő Container osztályok törlése a Menu-ből. Defaults to False.
+
+        Raises:
+            TypeError: Ha nem a Container osztály leszármazottja
         """
+        ex.instance_exception(self, Container)
+
         self._prev_selected = None
         self._prev_default = None
         self._containers = []
@@ -52,8 +81,14 @@ class ExtendedContainer:
 
         Args:
             containers (tuple): Container osztályok, az első lesz a kiválasztott
+        
+        Raises:
+            TypeError: Ha nem a Container osztály leszármazottja
+            ValueError: Ha nem listaszerű elem
+            IndexError: Ha a lista elemszáma kevesebb mint 1
         """
-        list_len_assert('contaniners', containers, 1)
+        ex.instance_exception(self, Container)
+        ex.arg_index_exception('containers', containers, 1)
 
         self._containers = [containers[0]]
         
@@ -62,7 +97,12 @@ class ExtendedContainer:
 
     def restore_session(self):
         """Menu osztály állapotának visszaállítása
+        
+        Raises:
+            TypeError: Ha nem a Container osztály leszármazottja
         """
+        ex.instance_exception(self, Container)
+        
         if not hasattr(self, '_prev_selected'):
             return
 
@@ -208,7 +248,7 @@ class LevelSelectorContainer(ExtendedContainer, Container):
         list_container (Container): a pályákat tartalmazó container
         spaces (list[Space]): játékterek
     """
-    def __init__(self, menu: Menu, action: Callable, set_name: str, selected_player_id: int = -1, **kwargs):
+    def __init__(self, menu: Menu, action: Callable, set_name: str, show_info: bool = True, selected_player_id: int = -1, **kwargs):
         """LevelSelectorContainer
 
         Args:
@@ -224,6 +264,8 @@ class LevelSelectorContainer(ExtendedContainer, Container):
 
         self.action = action
 
+        self.show_info = show_info
+
         self.save_session(True)
 
         self.set_name = set_name
@@ -234,6 +276,9 @@ class LevelSelectorContainer(ExtendedContainer, Container):
         x_pos = int(self.size.p1 / 8)
         y_pos = int((self.size.p2 - (rows * 400)) / 2)
         self.list_container = Container(self.menu, position=(x_pos,y_pos), size=(self.size[0] * 6/8, rows*410))
+        self.list_container.color['bg'] = (0,0,0,0)
+        self.list_container.color['focus'] = (0,0,0,0)
+        self.list_container.color['select'] = (0,0,0,0)
         
         self.add_container((self.list_container, self))
 
@@ -267,7 +312,7 @@ class LevelSelectorContainer(ExtendedContainer, Container):
                 done_levels = 0 if stat is None else stat['done_levels']
                 if level > done_levels:
                     action = None
-            SLevel(self.list_container, action, self.set_name, level, position=(col*228, 400*row))
+            SLevel(self.list_container, action, self.set_name, level, self.show_info, position=(col*228, 400*row))
             col += 1
             if col > cols:
                 row += 1
@@ -301,7 +346,7 @@ class SetSelectorContainer(ExtendedContainer, Container):
         list_container (Container): a pályákat tartalmazó container
         spaces (list[Space]): játékterek
     """
-    def __init__(self, menu: Menu, action: Callable, **kwargs):
+    def __init__(self, menu: Menu, action: Callable, show_info: bool = True, **kwargs):
         """SetSelectorContainer
 
         Args:
@@ -314,6 +359,7 @@ class SetSelectorContainer(ExtendedContainer, Container):
         Container.__init__(self, menu, **kwargs)
 
         self.action = action
+        self.show_info = show_info
 
         self.save_session(True)
 
@@ -323,6 +369,10 @@ class SetSelectorContainer(ExtendedContainer, Container):
         x_pos = int(self.size.p1 / 8)
         y_pos = int((self.size.p2 - (rows * 400)) / 2)
         self.list_container = Container(self.menu, position=(x_pos,y_pos), size=(self.size[0] * 6/8, rows*410))
+
+        self.list_container.color['bg'] = (0,0,0,0)
+        self.list_container.color['focus'] = (0,0,0,0)
+        self.list_container.color['select'] = (0,0,0,0)
         
         self.add_container((self.list_container, self))
         #self.menu.fixed = True
@@ -351,7 +401,7 @@ class SetSelectorContainer(ExtendedContainer, Container):
         col = 0
 
         for set_name in self.sets:
-            SSet(self.list_container, self.select_set, set_name, position=(col*228, 400*row))
+            SSet(self.list_container, self.select_set, set_name, self.show_info, position=(col*228, 400*row))
             col += 1
             if col > cols:
                 row += 1

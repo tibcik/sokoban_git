@@ -1,0 +1,23 @@
+{
+    "saves": [
+        {
+            "player_name": "R\u00e9pal\u00e9gy",
+            "current_set": "classic",
+            "current_level": 0,
+            "current_setup": {},
+            "done": {
+                "classic": [
+                    {
+                        "moves": 40,
+                        "time": 10.504668474197388,
+                        "best_moves": 0,
+                        "best_time": 0
+                    }
+                ]
+            },
+            "last_player": true
+        },
+        {},
+        {}
+    ]
+}

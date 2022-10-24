@@ -1,4 +1,23 @@
-"""Checkbox osztály modul
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: checkbox.py
+Verzió: 1.0.0
+--------------------
+pygame_menu.components.checkbox
+
+Jelölőmezőként használható menüelem.
+
+Osztályok:
+    Checkbox
 """
 from __future__ import annotations
 
@@ -7,6 +26,8 @@ import pygame as pg
 from sokoban import config
 
 from .component import *
+
+import utils.exceptions as ex
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -46,8 +67,11 @@ class Checkbox(MouseGrabber, Selectable, Component):
 
     @checked.setter
     def checked(self, value: bool):
-        """setter"""
-        assert type(value) == bool, (f"Várt bool típus, kapott {type(value)}")
+        """setter
+        
+        Raises:
+            ValueError: Ha nem bool típusú"""
+        ex.arg_type_exception('value', value, bool)
         self._checked = value
 
         self.updated()

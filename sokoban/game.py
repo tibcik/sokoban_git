@@ -1,4 +1,23 @@
-"""Sokoban játék modulja
+""" Miskolci Egyetem 
+Gépészmérnöki és Informatika Kar
+Általános Informatikai Intézeti Tanszék
+
+SZAKDOLGOZAT
+
+Téma: Sokoban, megoldóval és pályaszerkesztővel
+Készítette: Varga Tibor
+Neptunkód: SZO2SL
+Szak: Mérnök Informatikus BsC
+
+File: game.py
+Verzió: 1.0.0
+--------------------
+sokoban.game
+
+Játék csomagja
+
+Osztályok:
+    Game
 """
 from __future__ import annotations
 #from attr import has
@@ -9,7 +28,6 @@ import time
 from utils import Pair
 from pygame_menu.utils import EventHandler
 
-from . import config
 from .data import loader, saves
 from .movepool import MovePool
 from .space import Space
@@ -38,6 +56,9 @@ class Game(pg.sprite.Sprite, EventHandler):
         statistic (Statistic): játék statisztikáit megjelenítő osztály
         key_pressed (int): gomb utolsó lenyomásának időpontja
         key_pool (list): lenyomott gombok listája
+        solver (SolverThread): megoldó osztálya
+        show_solution (bool): a megoldás mutatása
+        last_solution_check (float): az utolsó ellenőrzés időpontja
     """
     def __init__(self, controller: MainController, screen: pg.Surface, set_name: str, level: int):
         """Game
@@ -69,10 +90,13 @@ class Game(pg.sprite.Sprite, EventHandler):
         self.pool = None
         self.statistic = None
 
-        self.solver = None
+        self.solver: solver.SolverThread = None
         self.show_solution = False
         self.last_solution_check = time.time()
 
+        resetFrameset()
+
+        solver.SolverThread.reset_states(None)
         self.init_level()
 
     def init_level(self):
@@ -90,21 +114,32 @@ class Game(pg.sprite.Sprite, EventHandler):
         self.pool = MovePool(self.space.player)
         self.statistic = Statistic()
 
-        if self.solver is not None:
-            self.solver.reset_states()
+        if self.show_solution and self.solver is not None:
+            solution = self.solver.getSolution(self.space)
+            if solution is not None:
+                self.space.solution = solution
+            else:
+                self.space.solution = ""
+                self.last_solution_check = time.time()
 
-    def run_solver(self, silent: bool = False):
+    def run_solver(self):
+        """run_solver Megoldó futtatása
+
+        Args:
+            silent (bool, optional): visszajelzés nélkül. Defaults to False.
+        """
         if self.solver != None and self.solver.is_alive():
             return
-
-        if not silent:
-            self.show_solution = not self.show_solution
-            self.space.solution = ''
         
         self.solver = solver.SolverThread(self.space, self.set_solution)
         self.solver.start()
 
-    def set_solution(self, solution):
+    def set_solution(self, solution: str):
+        """set_solution Megoldás megtalálását lekezelő metódus
+
+        Args:
+            solution (str): megoldás
+        """
         if solution is None or solution == '':
             self.space.solution = ''
             return
@@ -117,7 +152,11 @@ class Game(pg.sprite.Sprite, EventHandler):
         if self.show_solution:
             self.space.solution = solution
 
-        print("Sol - OK")
+        # print("Sol - OK")
+
+    def hide_solution(self):
+        self.show_solution = False
+        self.space.solution = ''
 
     def next_level(self):
         """következő pálya betöltése
@@ -125,6 +164,7 @@ class Game(pg.sprite.Sprite, EventHandler):
         if loader.jget_levels() > (self.level + 1):
             self.level += 1
 
+        solver.SolverThread.reset_states(None)
         self.init_level()
 
     def restart(self):
@@ -304,7 +344,7 @@ class Game(pg.sprite.Sprite, EventHandler):
 
         if self.last_solution_check != -1 and time.time() - self.last_solution_check > 5:
             if self.solver is None or self.solver.getSolution(self.space) is None:
-                self.run_solver(True)
+                self.run_solver()
                 self.last_solution_check = -1
 
         self.space.objects.update()
